@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import type { CategoryGroup } from "@/lib/categories";
+
+/** Minimal category shape the nav dropdown needs. */
+export interface NavCategory {
+  slug: string;
+  label: string;
+  count: number;
+  /** Dedicated category page, e.g. "/category/trivia-rankings". */
+  href: string;
+}
 
 export interface NavUser {
   email: string;
@@ -21,7 +29,7 @@ export function Navbar({
   quizIds,
   user = null,
 }: {
-  categories: CategoryGroup[];
+  categories: NavCategory[];
   quizIds: string[];
   user?: NavUser | null;
 }) {
@@ -119,13 +127,25 @@ function AuthMenu({ user }: { user: NavUser }) {
   );
 }
 
-function CategoriesDropdown({ categories }: { categories: CategoryGroup[] }) {
+function CategoriesDropdown({ categories }: { categories: NavCategory[] }) {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const itemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const menuId = useId();
+
+  // "All games" leads the list, then each category.
+  const items: Array<{ key: string; label: string; href: string; count?: number }> =
+    [
+      { key: "all", label: "All games", href: "/category" },
+      ...categories.map((c) => ({
+        key: c.slug,
+        label: c.label,
+        href: c.href,
+        count: c.count,
+      })),
+    ];
 
   const close = useCallback((returnFocus = false) => {
     setOpen(false);
@@ -165,7 +185,7 @@ function CategoriesDropdown({ categories }: { categories: CategoryGroup[] }) {
         break;
       case "ArrowUp":
         e.preventDefault();
-        openMenu(categories.length - 1);
+        openMenu(items.length - 1);
         break;
       case "Escape":
         close();
@@ -177,11 +197,11 @@ function CategoriesDropdown({ categories }: { categories: CategoryGroup[] }) {
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setActiveIndex((i) => (i + 1) % categories.length);
+        setActiveIndex((i) => (i + 1) % items.length);
         break;
       case "ArrowUp":
         e.preventDefault();
-        setActiveIndex((i) => (i - 1 + categories.length) % categories.length);
+        setActiveIndex((i) => (i - 1 + items.length) % items.length);
         break;
       case "Home":
         e.preventDefault();
@@ -189,7 +209,7 @@ function CategoriesDropdown({ categories }: { categories: CategoryGroup[] }) {
         break;
       case "End":
         e.preventDefault();
-        setActiveIndex(categories.length - 1);
+        setActiveIndex(items.length - 1);
         break;
       case "Escape":
         e.preventDefault();
@@ -232,13 +252,13 @@ function CategoriesDropdown({ categories }: { categories: CategoryGroup[] }) {
         <div
           id={menuId}
           role="menu"
-          aria-label="Quiz categories"
-          className="absolute left-0 top-[calc(100%+8px)] z-50 w-[240px] overflow-hidden rounded-at-md border border-at-hairline bg-at-canvas py-[6px] shadow-at-card-hover"
+          aria-label="Game categories"
+          className="absolute left-0 top-[calc(100%+8px)] z-50 w-[260px] overflow-hidden rounded-at-md border border-at-hairline bg-at-canvas py-[6px] shadow-at-card-hover"
         >
-          {categories.map((cat, i) => (
+          {items.map((item, i) => (
             <Link
-              key={cat.slug}
-              href={`/#${cat.slug}`}
+              key={item.key}
+              href={item.href}
               ref={(el) => {
                 itemRefs.current[i] = el;
               }}
@@ -246,12 +266,18 @@ function CategoriesDropdown({ categories }: { categories: CategoryGroup[] }) {
               tabIndex={activeIndex === i ? 0 : -1}
               onKeyDown={onItemKeyDown}
               onClick={() => close()}
-              className="flex items-center justify-between px-md py-[10px] font-haas text-at-body-md text-at-body no-underline outline-none transition-colors hover:bg-at-surface-soft hover:text-at-link focus:bg-at-surface-soft focus:text-at-link"
+              className={`flex items-center justify-between px-md py-[10px] font-haas text-at-body-md no-underline outline-none transition-colors hover:bg-at-surface-soft hover:text-at-link focus:bg-at-surface-soft focus:text-at-link ${
+                item.key === "all"
+                  ? "border-b border-at-hairline font-medium text-at-ink"
+                  : "text-at-body"
+              }`}
             >
-              <span>{cat.label}</span>
-              <span className="font-haas text-at-caption text-at-muted">
-                {cat.quizzes.length}
-              </span>
+              <span>{item.label}</span>
+              {typeof item.count === "number" && (
+                <span className="font-haas text-at-caption text-at-muted">
+                  {item.count}
+                </span>
+              )}
             </Link>
           ))}
         </div>
