@@ -23,6 +23,11 @@ yarn-error.log*
 .env*.local
 .env
 
+# secrets — Google OAuth client secret files, service-role keys, etc.
+client_secret*.json
+*service_role*
+*.pem
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
