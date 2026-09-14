@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="Music">
+  <rect width="320" height="180" fill="#fcab79"/>
+  <g fill="#181d26">
+    <circle cx="126" cy="122" r="16"/>
+    <circle cx="196" cy="110" r="16"/>
+    <rect x="138" y="58" width="6" height="66"/>
+    <rect x="208" y="46" width="6" height="66"/>
+    <path d="M138 58c26-8 50-14 76-20v16c-26 6-50 12-76 20z"/>
+  </g>
+  <circle cx="160" cy="90" r="70" fill="none" stroke="#aa2d00" stroke-width="3" opacity="0.35"/>
+</svg>

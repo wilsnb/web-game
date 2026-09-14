@@ -1,0 +1,26 @@
+{
+  "id": "most-visited-websites",
+  "title": "Top 15 Most Visited Websites in the World",
+  "category": "internet",
+  "listLength": 15,
+  "source": "Similarweb global monthly traffic rankings, early 2024",
+  "description": "The sites that pull the most traffic on the entire internet.",
+  "thumbnail": "/thumbnails/internet.svg",
+  "list": [
+    { "rank": 1, "answer": "Google", "aliases": ["google.com"] },
+    { "rank": 2, "answer": "YouTube", "aliases": ["youtube.com"] },
+    { "rank": 3, "answer": "Facebook", "aliases": ["facebook.com", "FB"] },
+    { "rank": 4, "answer": "Instagram", "aliases": ["instagram.com", "IG"] },
+    { "rank": 5, "answer": "Twitter", "aliases": ["X", "twitter.com", "x.com"] },
+    { "rank": 6, "answer": "Baidu", "aliases": ["baidu.com"] },
+    { "rank": 7, "answer": "Wikipedia", "aliases": ["wikipedia.org"] },
+    { "rank": 8, "answer": "Yahoo", "aliases": ["yahoo.com"] },
+    { "rank": 9, "answer": "Yandex", "aliases": ["yandex.ru", "yandex.com"] },
+    { "rank": 10, "answer": "WhatsApp", "aliases": ["whatsapp.com"] },
+    { "rank": 11, "answer": "Amazon", "aliases": ["amazon.com"] },
+    { "rank": 12, "answer": "TikTok", "aliases": ["tiktok.com"] },
+    { "rank": 13, "answer": "Netflix", "aliases": ["netflix.com"] },
+    { "rank": 14, "answer": "Reddit", "aliases": ["reddit.com"] },
+    { "rank": 15, "answer": "LinkedIn", "aliases": ["linkedin.com"] }
+  ]
+}

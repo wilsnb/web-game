@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="Movies">
+  <rect width="320" height="180" fill="#aa2d00"/>
+  <rect x="96" y="42" width="128" height="96" rx="8" fill="#181d26"/>
+  <g fill="#f5e9d4">
+    <rect x="104" y="50" width="14" height="14" rx="2"/>
+    <rect x="104" y="80" width="14" height="14" rx="2"/>
+    <rect x="104" y="110" width="14" height="14" rx="2"/>
+    <rect x="202" y="50" width="14" height="14" rx="2"/>
+    <rect x="202" y="80" width="14" height="14" rx="2"/>
+    <rect x="202" y="110" width="14" height="14" rx="2"/>
+  </g>
+  <polygon points="146,72 146,108 178,90" fill="#f4d35e"/>
+</svg>

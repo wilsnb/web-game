@@ -1,0 +1,21 @@
+{
+  "id": "most-consumed-beverages",
+  "title": "Top 10 Most Consumed Beverages Worldwide",
+  "category": "food",
+  "listLength": 10,
+  "source": "Global per-capita consumption figures compiled from industry and FAO data, 2023",
+  "description": "The drinks the world pours most, from the everyday to the indulgent.",
+  "thumbnail": "/thumbnails/food.svg",
+  "list": [
+    { "rank": 1, "answer": "Water", "aliases": [] },
+    { "rank": 2, "answer": "Tea", "aliases": [] },
+    { "rank": 3, "answer": "Coffee", "aliases": [] },
+    { "rank": 4, "answer": "Beer", "aliases": [] },
+    { "rank": 5, "answer": "Carbonated Soft Drinks", "aliases": ["soda", "pop", "soft drinks", "fizzy drinks"] },
+    { "rank": 6, "answer": "Milk", "aliases": [] },
+    { "rank": 7, "answer": "Juice", "aliases": ["fruit juice"] },
+    { "rank": 8, "answer": "Wine", "aliases": [] },
+    { "rank": 9, "answer": "Bottled Water", "aliases": [] },
+    { "rank": 10, "answer": "Sports and Energy Drinks", "aliases": ["energy drinks", "sports drinks"] }
+  ]
+}

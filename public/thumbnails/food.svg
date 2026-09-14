@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="Food and drink">
+  <rect width="320" height="180" fill="#f4d35e"/>
+  <path d="M128 52h56l-6 74a10 10 0 0 1-10 9h-18a10 10 0 0 1-10-9z" fill="#181d26"/>
+  <rect x="132" y="66" width="48" height="20" fill="#aa2d00" opacity="0.85"/>
+  <path d="M184 66h18a16 16 0 0 1 0 32h-16" fill="none" stroke="#181d26" stroke-width="6"/>
+  <circle cx="150" cy="40" r="4" fill="#181d26" opacity="0.6"/>
+  <circle cx="162" cy="34" r="4" fill="#181d26" opacity="0.6"/>
+</svg>

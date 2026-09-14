@@ -1,0 +1,49 @@
+@import url("https://rsms.me/inter/inter.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: "SF Pro Text", system-ui, -apple-system, BlinkMacSystemFont,
+    "Inter", sans-serif;
+  color: #1d1d1f;
+  background-color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Inter approximation of SF Pro's rounded glyphs (design doc note). */
+@supports (font-variation-settings: normal) {
+  body {
+    font-feature-settings: "ss03";
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* System-wide press micro-interaction (design doc: transform scale 0.95). */
+.press-scale {
+  transition: transform 0.12s ease;
+}
+.press-scale:active {
+  transform: scale(0.95);
+}
+
+/* Keyboard focus ring rooted in Focus Blue. */
+.focus-ring:focus-visible {
+  outline: 2px solid #0071e3;
+  outline-offset: 2px;
+}

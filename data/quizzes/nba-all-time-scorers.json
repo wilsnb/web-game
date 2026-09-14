@@ -1,0 +1,23 @@
+{
+  "id": "nba-all-time-scorers",
+  "title": "Top 12 NBA All-Time Leading Scorers",
+  "category": "sports",
+  "listLength": 12,
+  "source": "NBA.com / Basketball-Reference regular-season career points, as of the 2023-24 season",
+  "description": "The legends who racked up the most career points in NBA history.",
+  "thumbnail": "/thumbnails/sports.svg",
+  "list": [
+    { "rank": 1, "answer": "LeBron James", "aliases": ["LeBron", "King James"] },
+    { "rank": 2, "answer": "Kareem Abdul-Jabbar", "aliases": ["Kareem", "Abdul Jabbar"] },
+    { "rank": 3, "answer": "Karl Malone", "aliases": ["The Mailman"] },
+    { "rank": 4, "answer": "Kobe Bryant", "aliases": ["Kobe", "Black Mamba"] },
+    { "rank": 5, "answer": "Michael Jordan", "aliases": ["MJ", "Jordan", "Air Jordan"] },
+    { "rank": 6, "answer": "Dirk Nowitzki", "aliases": ["Dirk"] },
+    { "rank": 7, "answer": "Wilt Chamberlain", "aliases": ["Wilt", "The Stilt"] },
+    { "rank": 8, "answer": "Shaquille O'Neal", "aliases": ["Shaq", "Shaquille ONeal"] },
+    { "rank": 9, "answer": "Carmelo Anthony", "aliases": ["Melo", "Carmelo"] },
+    { "rank": 10, "answer": "Moses Malone", "aliases": [] },
+    { "rank": 11, "answer": "Elvin Hayes", "aliases": [] },
+    { "rank": 12, "answer": "Hakeem Olajuwon", "aliases": ["Hakeem", "The Dream"] }
+  ]
+}

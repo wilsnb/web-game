@@ -1,0 +1,31 @@
+{
+  "id": "most-populous-us-states",
+  "title": "Top 20 Most Populous U.S. States",
+  "category": "geography",
+  "listLength": 20,
+  "source": "U.S. Census Bureau, Vintage 2023 population estimates",
+  "description": "Rank America's biggest states by how many people call them home.",
+  "thumbnail": "/thumbnails/geography.svg",
+  "list": [
+    { "rank": 1, "answer": "California", "aliases": ["CA", "Cali"] },
+    { "rank": 2, "answer": "Texas", "aliases": ["TX"] },
+    { "rank": 3, "answer": "Florida", "aliases": ["FL"] },
+    { "rank": 4, "answer": "New York", "aliases": ["NY"] },
+    { "rank": 5, "answer": "Pennsylvania", "aliases": ["PA", "Penn"] },
+    { "rank": 6, "answer": "Illinois", "aliases": ["IL"] },
+    { "rank": 7, "answer": "Ohio", "aliases": ["OH"] },
+    { "rank": 8, "answer": "Georgia", "aliases": ["GA"] },
+    { "rank": 9, "answer": "North Carolina", "aliases": ["NC"] },
+    { "rank": 10, "answer": "Michigan", "aliases": ["MI"] },
+    { "rank": 11, "answer": "New Jersey", "aliases": ["NJ"] },
+    { "rank": 12, "answer": "Virginia", "aliases": ["VA"] },
+    { "rank": 13, "answer": "Washington", "aliases": ["WA"] },
+    { "rank": 14, "answer": "Arizona", "aliases": ["AZ"] },
+    { "rank": 15, "answer": "Tennessee", "aliases": ["TN"] },
+    { "rank": 16, "answer": "Massachusetts", "aliases": ["MA", "Mass"] },
+    { "rank": 17, "answer": "Indiana", "aliases": ["IN"] },
+    { "rank": 18, "answer": "Missouri", "aliases": ["MO"] },
+    { "rank": 19, "answer": "Maryland", "aliases": ["MD"] },
+    { "rank": 20, "answer": "Wisconsin", "aliases": ["WI"] }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "highest-grossing-films",
+  "title": "Top 15 Highest-Grossing Films of All Time",
+  "category": "movies",
+  "listLength": 15,
+  "source": "Box Office Mojo, worldwide lifetime gross (unadjusted), as of early 2024",
+  "description": "The blockbusters that made the most money at the global box office.",
+  "thumbnail": "/thumbnails/movies.svg",
+  "list": [
+    { "rank": 1, "answer": "Avatar", "aliases": [] },
+    { "rank": 2, "answer": "Avengers: Endgame", "aliases": ["Endgame"] },
+    { "rank": 3, "answer": "Avatar: The Way of Water", "aliases": ["Avatar 2", "The Way of Water"] },
+    { "rank": 4, "answer": "Titanic", "aliases": [] },
+    { "rank": 5, "answer": "Star Wars: The Force Awakens", "aliases": ["The Force Awakens", "Star Wars Episode VII"] },
+    { "rank": 6, "answer": "Avengers: Infinity War", "aliases": ["Infinity War"] },
+    { "rank": 7, "answer": "Spider-Man: No Way Home", "aliases": ["No Way Home"] },
+    { "rank": 8, "answer": "Jurassic World", "aliases": [] },
+    { "rank": 9, "answer": "The Lion King", "aliases": ["Lion King 2019"] },
+    { "rank": 10, "answer": "The Avengers", "aliases": ["Avengers 2012", "Marvel's The Avengers"] },
+    { "rank": 11, "answer": "Furious 7", "aliases": ["Fast and Furious 7", "Fast 7"] },
+    { "rank": 12, "answer": "Top Gun: Maverick", "aliases": ["Maverick"] },
+    { "rank": 13, "answer": "Frozen II", "aliases": ["Frozen 2"] },
+    { "rank": 14, "answer": "Barbie", "aliases": [] },
+    { "rank": 15, "answer": "Avengers: Age of Ultron", "aliases": ["Age of Ultron"] }
+  ]
+}

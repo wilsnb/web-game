@@ -1,0 +1,21 @@
+{
+  "id": "most-populous-countries",
+  "title": "Top 10 Most Populous Countries",
+  "category": "geography",
+  "listLength": 10,
+  "source": "United Nations World Population Prospects, 2023 estimates",
+  "description": "Name the ten nations where the most people on Earth live.",
+  "thumbnail": "/thumbnails/geography.svg",
+  "list": [
+    { "rank": 1, "answer": "India", "aliases": [] },
+    { "rank": 2, "answer": "China", "aliases": ["PRC"] },
+    { "rank": 3, "answer": "United States", "aliases": ["USA", "US", "America", "United States of America"] },
+    { "rank": 4, "answer": "Indonesia", "aliases": [] },
+    { "rank": 5, "answer": "Pakistan", "aliases": [] },
+    { "rank": 6, "answer": "Nigeria", "aliases": [] },
+    { "rank": 7, "answer": "Brazil", "aliases": [] },
+    { "rank": 8, "answer": "Bangladesh", "aliases": [] },
+    { "rank": 9, "answer": "Russia", "aliases": ["Russian Federation"] },
+    { "rank": 10, "answer": "Mexico", "aliases": [] }
+  ]
+}
