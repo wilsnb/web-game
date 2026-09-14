@@ -56,6 +56,8 @@ const config: Config = {
         "at-on-dark": "#ffffff",
         "at-link": "#1b61c9",
         "at-link-active": "#1a3866",
+        "at-info-border": "#458fff",
+        "at-success": "#006400",
       },
       fontFamily: {
         display: [

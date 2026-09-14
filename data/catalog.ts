@@ -15,6 +15,8 @@ export interface CatalogGame {
   title: string;
   description: string;
   comingSoon: boolean;
+  /** Where a playable game links to. Omitted while a game is a placeholder. */
+  href?: string;
 }
 
 export interface CatalogCategory {
@@ -22,6 +24,8 @@ export interface CatalogCategory {
   label: string;
   description: string;
   thumbnail: string;
+  /** Show this category as a section on the homepage landing page. */
+  featuredOnHome?: boolean;
   games: CatalogGame[];
 }
 
@@ -31,6 +35,7 @@ export const CATALOG: CatalogCategory[] = [
     label: "Trivia & Rankings",
     description: "Guess the ranked list — closer to #1 scores more.",
     thumbnail: "/thumbnails/music.svg",
+    featuredOnHome: true,
     games: [
       {
         id: "top-100-streamed-artists",
@@ -51,6 +56,7 @@ export const CATALOG: CatalogCategory[] = [
     label: "Party Games",
     description: "Fast, social games for the whole room.",
     thumbnail: "/thumbnails/internet.svg",
+    featuredOnHome: true,
     games: [
       {
         id: "who-is-the-impostor",
@@ -71,6 +77,7 @@ export const CATALOG: CatalogCategory[] = [
     label: "Couples",
     description: "Games made for two.",
     thumbnail: "/thumbnails/food.svg",
+    featuredOnHome: true,
     games: [
       {
         id: "truth-or-dare-couples",
@@ -91,6 +98,7 @@ export const CATALOG: CatalogCategory[] = [
     label: "Brain Teasers",
     description: "Puzzles that make you think fast.",
     thumbnail: "/thumbnails/geography.svg",
+    featuredOnHome: true,
     games: [
       {
         id: "logic-pattern-puzzle",
@@ -188,6 +196,19 @@ export function getAllCategoryUrlSlugs(): string[] {
 /** Total number of games across all categories. */
 export function getTotalGameCount(): number {
   return CATALOG.reduce((n, c) => n + c.games.length, 0);
+}
+
+/** Categories to feature as sections on the homepage landing page. */
+export function getHomeCategories(): CatalogCategory[] {
+  return CATALOG.filter((c) => c.featuredOnHome);
+}
+
+/** Count of games that are actually playable today (not coming soon). */
+export function getPlayableGameCount(): number {
+  return CATALOG.reduce(
+    (n, c) => n + c.games.filter((g) => !g.comingSoon).length,
+    0
+  );
 }
 
 /**

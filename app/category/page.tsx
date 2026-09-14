@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CATALOG, getTotalGameCount, urlSlug } from "@/data/catalog";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { GameCard } from "@/components/GameCard";
 
 export const metadata: Metadata = {
@@ -70,16 +71,7 @@ export default function AllGamesPage() {
         </div>
       </section>
 
-      <footer className="border-t border-at-hairline bg-at-canvas">
-        <div className="mx-auto max-w-[1280px] px-md py-lg sm:px-lg">
-          <Link
-            href="/"
-            className="font-haas text-at-body-md text-at-link hover:text-at-link-active"
-          >
-            ← Back home
-          </Link>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

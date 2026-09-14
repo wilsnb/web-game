@@ -6,6 +6,7 @@ import {
   getCategoryByUrlSlug,
 } from "@/data/catalog";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { GameCard } from "@/components/GameCard";
 
 type PageProps = {
@@ -85,22 +86,7 @@ export default async function CategoryPage({ params }: PageProps) {
         </ul>
       </section>
 
-      <footer className="border-t border-at-hairline bg-at-canvas">
-        <div className="mx-auto flex max-w-[1280px] items-center gap-md px-md py-lg sm:px-lg">
-          <Link
-            href="/category"
-            className="font-haas text-at-body-md text-at-link hover:text-at-link-active"
-          >
-            ← All games
-          </Link>
-          <Link
-            href="/"
-            className="font-haas text-at-body-md text-at-link hover:text-at-link-active"
-          >
-            Home
-          </Link>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

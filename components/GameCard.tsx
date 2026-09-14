@@ -1,11 +1,14 @@
 import Image from "next/image";
+import Link from "next/link";
+import type { ReactNode } from "react";
 import type { CatalogGame } from "@/data/catalog";
 
 /**
- * Placeholder game card in the Airtable editorial grammar.
+ * Game card in the Airtable editorial grammar.
  *  - Bordered card surface distinct from the page background.
- *  - `comingSoon` games are dimmed and carry a "Coming soon" badge.
- *  - No game logic is wired yet, so cards are non-interactive on purpose.
+ *  - `comingSoon` games are dimmed, grayscaled, and non-interactive.
+ *  - Games with an `href` become links with a hover lift.
+ *  - Games without an href (built but not yet wired) render as static cards.
  *
  * `thumbnail` is the category thumbnail, shared by its games for now.
  */
@@ -17,14 +20,10 @@ export function GameCard({
   thumbnail: string;
 }) {
   const soon = game.comingSoon;
+  const isLink = !soon && Boolean(game.href);
 
-  return (
-    <div
-      aria-disabled={soon}
-      className={`flex items-stretch gap-md rounded-at-md border bg-at-surface-soft p-md shadow-at-card ${
-        soon ? "border-at-hairline opacity-70" : "border-at-hairline"
-      }`}
-    >
+  const inner = (
+    <>
       {/* Thumbnail */}
       <div className="relative h-[84px] w-[120px] flex-none overflow-hidden rounded-at-sm border border-at-hairline bg-at-canvas">
         <Image
@@ -51,7 +50,7 @@ export function GameCard({
         </div>
         <h3
           className={`mt-[6px] font-haas text-at-title-sm font-medium ${
-            soon ? "text-at-muted" : "text-at-ink"
+            soon ? "text-at-muted" : isLink ? "text-at-link" : "text-at-ink"
           }`}
         >
           {game.title}
@@ -60,6 +59,26 @@ export function GameCard({
           {game.description}
         </p>
       </div>
+    </>
+  );
+
+  const baseClass =
+    "flex h-full items-stretch gap-md rounded-at-md border border-at-hairline bg-at-surface-soft p-md shadow-at-card";
+
+  if (isLink) {
+    return (
+      <Link
+        href={game.href!}
+        className={`${baseClass} no-underline transition-all duration-150 hover:-translate-y-[2px] hover:border-at-border-strong hover:shadow-at-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link`}
+      >
+        {inner}
+      </Link>
+    );
+  }
+
+  return (
+    <div aria-disabled={soon} className={`${baseClass} ${soon ? "opacity-70" : ""}`}>
+      {inner as ReactNode}
     </div>
   );
 }

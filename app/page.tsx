@@ -1,70 +1,71 @@
 import type { Metadata } from "next";
 import { getAllQuizIds } from "@/lib/quizzes";
-import { CATALOG, getCatalogCategories } from "@/data/catalog";
-import { getNavUser } from "@/lib/auth";
-import { Navbar } from "@/components/Navbar";
-import { CatalogSections } from "@/components/CatalogSections";
-import { CurrentDate } from "@/components/CurrentDate";
+import { getHomeCategories, getTotalGameCount } from "@/data/catalog";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
+import { Hero } from "@/components/home/Hero";
+import { StatsBar } from "@/components/home/StatsBar";
+import { CategoryShowcase } from "@/components/home/CategoryShowcase";
+import { DemoSection } from "@/components/home/DemoSection";
+import { Faq } from "@/components/home/Faq";
 
 export const metadata: Metadata = {
-  title: "Ranked — Party Games & Trivia",
+  title: "Ranked — Quizzes, Party Games & Quick Activities",
   description:
-    "Trivia, party games, couples games, brain teasers and more. Pass-and-play on one shared device.",
+    "One hub for trivia rankings, party games, couples games and brain teasers. Pass-and-play on one shared device — no downloads, no account needed.",
   alternates: { canonical: "/" },
 };
 
 export default async function HomePage() {
   const quizIds = getAllQuizIds();
-  const categories = getCatalogCategories();
-  const totalGames = CATALOG.reduce((n, c) => n + c.games.length, 0);
-  const user = await getNavUser();
+  const homeCategories = getHomeCategories();
+  const totalGames = getTotalGameCount();
+
+  // Flagship play target: the first real playable ranked quiz, if any exist.
+  const flagshipHref = quizIds.length > 0 ? `/play/${quizIds[0]}` : null;
 
   return (
     <div className="min-h-screen bg-at-surface-soft">
-      <Navbar categories={categories} quizIds={quizIds} user={user} />
+      <SiteHeader />
 
-      {/* Hero / welcome band — calm white canvas, Airtable editorial */}
-      <section className="bg-at-canvas">
-        <div className="mx-auto max-w-[1280px] px-md py-xl sm:px-lg">
-          <p className="font-haas text-at-caption uppercase tracking-wide text-at-coral">
-            Party games &amp; trivia
-          </p>
-          <h1 className="mt-xs max-w-[720px] font-haas text-at-display-md font-normal text-at-ink sm:text-at-display-lg">
-            Welcome to Ranked
-          </h1>
-          <p className="mt-sm max-w-[640px] font-haas text-at-title-md font-normal text-at-body">
-            Trivia, party games, couples games, brain teasers and more — all
-            pass-and-play on one shared device. New games are on the way.
-          </p>
-          <div className="mt-md">
-            <CurrentDate />
+      {/* 1. Hero */}
+      <Hero quizIds={quizIds} />
+
+      {/* 2. Stats bar */}
+      <StatsBar gameCount={totalGames} />
+
+      {/* 3. Category-grouped game sections */}
+      <section
+        id="categories"
+        className="scroll-mt-[72px] bg-at-surface-soft"
+      >
+        <div className="mx-auto max-w-[1280px] px-md py-section sm:px-lg">
+          <div className="mb-xl">
+            <h2 className="font-haas text-at-display-md font-normal text-at-ink">
+              Browse by category
+            </h2>
+            <p className="mt-xs max-w-[640px] font-haas text-at-title-md font-normal text-at-body">
+              Pick a category and jump into a game. More categories are on the
+              way.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-section">
+            {homeCategories.map((category) => (
+              <CategoryShowcase key={category.slug} category={category} />
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Catalog */}
-      <section className="mx-auto max-w-[1280px] px-md py-xl sm:px-lg">
-        <div className="mb-lg flex items-baseline justify-between">
-          <h2 className="font-haas text-at-title-lg font-normal text-at-ink">
-            Browse by category
-          </h2>
-          <span className="font-haas text-at-body-md text-at-muted">
-            {categories.length} categories · {totalGames} games
-          </span>
-        </div>
-        <CatalogSections categories={CATALOG} />
-      </section>
+      {/* 4. See it in action */}
+      <DemoSection playHref={flagshipHref} />
 
-      {/* Footer */}
-      <footer className="border-t border-at-hairline bg-at-canvas">
-        <div className="mx-auto max-w-[1280px] px-md py-lg sm:px-lg">
-          <p className="font-haas text-at-body-md text-at-muted">
-            Ranked is a local pass-and-play party game. Games marked
-            &ldquo;Coming soon&rdquo; are still in the works. No accounts
-            required to play.
-          </p>
-        </div>
-      </footer>
+      {/* 5. FAQ */}
+      <Faq />
+
+      {/* 6. Footer */}
+      <SiteFooter />
     </div>
   );
 }
