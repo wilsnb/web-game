@@ -24,7 +24,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {/* Slow animated ambient gradient, behind everything. */}
+        <div aria-hidden className="ambient-bg" />
+        {children}
+      </body>
     </html>
   );
 }

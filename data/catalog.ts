@@ -203,6 +203,28 @@ export function getHomeCategories(): CatalogCategory[] {
   return CATALOG.filter((c) => c.featuredOnHome);
 }
 
+export interface FlatGame extends CatalogGame {
+  categoryLabel: string;
+  thumbnail: string;
+}
+
+/**
+ * Every game across all categories, flattened, each carrying its category's
+ * label and thumbnail. Playable games first, then coming-soon.
+ */
+export function getAllGames(): FlatGame[] {
+  const flat: FlatGame[] = CATALOG.flatMap((c) =>
+    c.games.map((g) => ({
+      ...g,
+      categoryLabel: c.label,
+      thumbnail: c.thumbnail,
+    }))
+  );
+  return flat.sort(
+    (a, b) => Number(a.comingSoon) - Number(b.comingSoon)
+  );
+}
+
 /** Count of games that are actually playable today (not coming soon). */
 export function getPlayableGameCount(): number {
   return CATALOG.reduce(

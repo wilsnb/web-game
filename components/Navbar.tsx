@@ -42,7 +42,7 @@ export function Navbar({
   }, [quizIds, router]);
 
   return (
-    <div className="w-full border-b border-at-hairline bg-at-canvas">
+    <div className="sticky top-0 z-50 w-full border-b border-at-hairline bg-at-canvas">
       <nav
         aria-label="Primary"
         className="mx-auto flex h-[64px] max-w-[1280px] items-center gap-md px-md sm:px-lg"

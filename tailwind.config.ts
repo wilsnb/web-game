@@ -150,6 +150,8 @@ const config: Config = {
         // Airtable homepage card elevation (rest + hover lift).
         "at-card": "0 1px 2px 0 rgba(24, 29, 38, 0.06)",
         "at-card-hover": "0 8px 24px -6px rgba(24, 29, 38, 0.18)",
+        // Lively hover glow for game cards (coral-tinted).
+        "at-glow": "0 10px 30px -6px rgba(170, 45, 0, 0.28)",
       },
       maxWidth: {
         content: "980px",
