@@ -198,6 +198,42 @@ export function getTotalGameCount(): number {
   return CATALOG.reduce((n, c) => n + c.games.length, 0);
 }
 
+export interface SearchItem {
+  type: "game" | "category";
+  title: string;
+  subtitle: string;
+  href: string;
+  comingSoon?: boolean;
+}
+
+/**
+ * Flat, client-safe index of everything searchable: each category and each
+ * game. Games link to their playable href if available, otherwise to the
+ * category page. Derived from the catalog so it stays accurate.
+ */
+export function getSearchIndex(): SearchItem[] {
+  const items: SearchItem[] = [];
+  for (const c of CATALOG) {
+    const slug = urlSlug(c);
+    items.push({
+      type: "category",
+      title: c.label,
+      subtitle: c.description,
+      href: `/category/${slug}`,
+    });
+    for (const g of c.games) {
+      items.push({
+        type: "game",
+        title: g.title,
+        subtitle: `${c.label} · ${g.description}`,
+        href: g.href ?? `/category/${slug}`,
+        comingSoon: g.comingSoon,
+      });
+    }
+  }
+  return items;
+}
+
 /** Categories to feature as sections on the homepage landing page. */
 export function getHomeCategories(): CatalogCategory[] {
   return CATALOG.filter((c) => c.featuredOnHome);

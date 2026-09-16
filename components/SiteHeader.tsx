@@ -1,5 +1,5 @@
 import { getAllQuizIds } from "@/lib/quizzes";
-import { getCatalogCategories } from "@/data/catalog";
+import { getCatalogCategories, getSearchIndex } from "@/data/catalog";
 import { getNavUser } from "@/lib/auth";
 import { Navbar } from "./Navbar";
 
@@ -11,7 +11,15 @@ import { Navbar } from "./Navbar";
 export async function SiteHeader() {
   const quizIds = getAllQuizIds();
   const categories = getCatalogCategories();
+  const searchIndex = getSearchIndex();
   const user = await getNavUser();
 
-  return <Navbar categories={categories} quizIds={quizIds} user={user} />;
+  return (
+    <Navbar
+      categories={categories}
+      quizIds={quizIds}
+      user={user}
+      searchIndex={searchIndex}
+    />
+  );
 }
