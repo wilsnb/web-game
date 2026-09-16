@@ -73,6 +73,14 @@ export function Navbar({
           Random
         </button>
 
+        {/* Go Pro (subscription) */}
+        <Link
+          href="/subscribe"
+          className="font-haas text-at-body-md font-medium text-at-coral no-underline transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px]"
+        >
+          Go Pro
+        </Link>
+
         {/* Auth area (far right) — icon button with dropdown */}
         <div className="ml-auto flex items-center">
           <AccountMenu user={user} />
