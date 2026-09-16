@@ -33,7 +33,7 @@ export function DemoSection({ playHref }: { playHref: string | null }) {
             </Link>
           ) : (
             <p className="mt-lg font-haas text-at-body-md text-at-body-muted">
-              Ranked quizzes are coming soon.
+              Ranked-list quizzes are coming soon.
             </p>
           )}
         </div>

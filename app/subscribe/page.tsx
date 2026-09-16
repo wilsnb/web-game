@@ -10,8 +10,8 @@ import {
 } from "@/lib/subscription/subscription";
 
 export const metadata: Metadata = {
-  title: "Ranked Pro",
-  description: "Subscribe to Ranked Pro.",
+  title: "Qwardoo Pro",
+  description: "Subscribe to Qwardoo Pro.",
   alternates: { canonical: "/subscribe" },
 };
 

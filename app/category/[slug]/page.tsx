@@ -27,7 +27,7 @@ export async function generateMetadata({
 
   return {
     title: category.label,
-    description: `${category.label} — ${category.description} Browse the games in this category on Ranked.`,
+    description: `${category.label} — ${category.description} Browse the games in this category on Qwardoo.`,
     alternates: { canonical: `/category/${slug}` },
   };
 }

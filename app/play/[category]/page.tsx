@@ -26,7 +26,7 @@ export async function generateMetadata({
     description,
     alternates: { canonical: `/play/${quiz.id}` },
     openGraph: {
-      title: `${quiz.title} — Ranked`,
+      title: `${quiz.title} — Qwardoo`,
       description,
       type: "website",
     },

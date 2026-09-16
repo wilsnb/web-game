@@ -5,7 +5,7 @@ import { getSnapClient } from "@/lib/midtrans/server";
 import { PLAN } from "@/lib/subscription/plan";
 
 /**
- * Creates a Midtrans Snap transaction for the Ranked Pro subscription and
+ * Creates a Midtrans Snap transaction for the Qwardoo Pro subscription and
  * returns a Snap token the browser uses to open the payment popup.
  *
  * Runs server-side only (uses the secret server key). Requires a signed-in

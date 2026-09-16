@@ -5,7 +5,7 @@ import { LegalPage, LegalSection } from "@/components/LegalPage";
 export const metadata: Metadata = {
   title: "Terms & Conditions",
   description:
-    "The terms for using Ranked, a free pass-and-play party quiz game with optional Google sign-in.",
+    "The terms for using Qwardoo, a free pass-and-play party quiz game with optional Google sign-in.",
   alternates: { canonical: "/terms" },
 };
 
@@ -18,14 +18,14 @@ export default function TermsPage() {
   return (
     <LegalPage title="Terms & Conditions" effectiveDate={EFFECTIVE_DATE}>
       <p className="font-haas text-at-body-md leading-relaxed text-at-body">
-        These Terms &amp; Conditions govern your use of Ranked (the
+        These Terms &amp; Conditions govern your use of Qwardoo (the
         &ldquo;Service&rdquo;). By using the Service, you agree to these terms.
         If you don&apos;t agree, please don&apos;t use the Service.
       </p>
 
-      <LegalSection heading="What Ranked is">
+      <LegalSection heading="What Qwardoo is">
         <p>
-          Ranked is a free, for-fun, pass-and-play party quiz game you play on a
+          Qwardoo is a free, for-fun, pass-and-play party quiz game you play on a
           shared device. It is provided as a hobby/personal project, not a
           commercial product.
         </p>

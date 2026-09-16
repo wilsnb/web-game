@@ -5,7 +5,7 @@ import { LegalPage, LegalSection } from "@/components/LegalPage";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How Ranked handles your data: Google sign-in profile info and saved gameplay progress.",
+    "How Qwardoo handles your data: Google sign-in profile info and saved gameplay progress.",
   alternates: { canonical: "/privacy" },
 };
 
@@ -17,8 +17,8 @@ export default function PrivacyPage() {
   return (
     <LegalPage title="Privacy Policy" effectiveDate={EFFECTIVE_DATE}>
       <p className="font-haas text-at-body-md leading-relaxed text-at-body">
-        This Privacy Policy explains what information Ranked (&ldquo;we&rdquo;,
-        &ldquo;us&rdquo;) collects, why, and what choices you have. Ranked is a
+        This Privacy Policy explains what information Qwardoo (&ldquo;we&rdquo;,
+        &ldquo;us&rdquo;) collects, why, and what choices you have. Qwardoo is a
         free, pass-and-play party quiz game. You can play as a guest without
         giving us any personal information. Some information is only collected
         if you choose to sign in.
@@ -77,7 +77,7 @@ export default function PrivacyPage() {
 
       <LegalSection heading="Service providers we rely on">
         <p>
-          We use a small number of third-party services to run Ranked. Your
+          We use a small number of third-party services to run Qwardoo. Your
           information is handled under their respective privacy policies:
         </p>
         <ul className="ml-lg list-disc space-y-xxs">
@@ -124,7 +124,7 @@ export default function PrivacyPage() {
 
       <LegalSection heading="Children">
         <p>
-          Ranked is a general-audience party game and is not directed at
+          Qwardoo is a general-audience party game and is not directed at
           children under 13. We do not knowingly collect personal information
           from children under 13.
         </p>

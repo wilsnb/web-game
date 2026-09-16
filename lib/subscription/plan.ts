@@ -4,9 +4,11 @@
  * subscription by `periodDays`.
  */
 export const PLAN = {
+  // NOTE: `id` kept stable ("ranked-pro-monthly") so any existing payment
+  // records/order-ids still reconcile; only the display name is rebranded.
   id: "ranked-pro-monthly",
-  name: "Ranked Pro",
-  description: "Ranked Pro — monthly subscription",
+  name: "Qwardoo Pro",
+  description: "Qwardoo Pro — monthly subscription",
   priceIdr: 49000,
   periodDays: 30,
 } as const;

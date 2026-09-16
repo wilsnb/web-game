@@ -11,7 +11,7 @@ export function SiteFooter() {
     <footer className="border-t border-at-hairline bg-at-canvas">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-sm px-md py-lg sm:flex-row sm:items-center sm:justify-between sm:px-lg">
         <p className="font-haas text-at-body-md text-at-muted">
-          Ranked is a local pass-and-play party game. No accounts required to
+          Qwardoo is a local pass-and-play party game. No accounts required to
           play.
         </p>
         <nav

@@ -10,7 +10,7 @@ import { DemoSection } from "@/components/home/DemoSection";
 import { Faq } from "@/components/home/Faq";
 
 export const metadata: Metadata = {
-  title: "Ranked — Quizzes, Party Games & Quick Activities",
+  title: "Qwardoo — Quizzes, Party Games & Quick Activities",
   description:
     "One hub for trivia rankings, party games, couples games and brain teasers. Pass-and-play on one shared device — no downloads, no account needed.",
   alternates: { canonical: "/" },

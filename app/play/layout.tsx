@@ -20,7 +20,7 @@ export default function PlayLayout({
             href="/"
             className="focus-ring text-nav-link font-normal tracking-tight text-body-on-dark hover:text-white"
           >
-            Ranked
+            Qwardoo
           </Link>
           <span className="text-nav-link text-body-muted">
             Pass &amp; Play Party Quiz

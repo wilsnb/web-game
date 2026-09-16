@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
@@ -48,17 +49,15 @@ export function Navbar({
         className="mx-auto flex h-[64px] max-w-[1280px] items-center gap-md px-md sm:px-lg"
       >
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-xs font-haas text-at-title-sm font-medium text-at-ink no-underline"
-        >
-          <span
-            aria-hidden
-            className="inline-flex h-[26px] w-[26px] items-center justify-center rounded-at-sm bg-at-coral text-at-on-dark"
-          >
-            #
-          </span>
-          Ranked
+        <Link href="/" className="flex items-center no-underline" aria-label="Qwardoo home">
+          <Image
+            src="/logo.jpg"
+            alt="Qwardoo"
+            width={664}
+            height={190}
+            priority
+            className="h-[32px] w-auto"
+          />
         </Link>
 
         {/* Categories dropdown */}

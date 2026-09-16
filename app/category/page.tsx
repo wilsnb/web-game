@@ -8,7 +8,7 @@ import { GameCard } from "@/components/GameCard";
 export const metadata: Metadata = {
   title: "All games",
   description:
-    "Browse every game on Ranked — trivia, party games, couples games, brain teasers, icebreakers and more.",
+    "Browse every game on Qwardoo — trivia, party games, couples games, brain teasers, icebreakers and more.",
   alternates: { canonical: "/category" },
 };
 
@@ -26,7 +26,7 @@ export default function AllGamesPage() {
             All games
           </p>
           <h1 className="mt-xs font-haas text-at-display-md font-normal text-at-ink sm:text-at-display-lg">
-            Every game on Ranked
+            Every game on Qwardoo
           </h1>
           <p className="mt-sm max-w-[640px] font-haas text-at-title-md font-normal text-at-body">
             {CATALOG.length} categories · {total} games. Games marked

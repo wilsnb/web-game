@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ranked-party-quiz.example.com"),
+  metadataBase: new URL("https://qwardoo.example.com"),
   title: {
-    default: "Ranked — The Pass-and-Play Party Quiz",
-    template: "%s — Ranked",
+    default: "Qwardoo — The Pass-and-Play Party Quiz",
+    template: "%s — Qwardoo",
   },
   description:
     "A local, pass-and-play party trivia game. Guess entries on a ranked list. The closer your correct guess is to #1, the more points you score.",
   openGraph: {
-    title: "Ranked — The Pass-and-Play Party Quiz",
+    title: "Qwardoo — The Pass-and-Play Party Quiz",
     description:
       "Take turns guessing entries on a ranked list. Closer to #1 means more points. 1–7 players, one device.",
     type: "website",
