@@ -41,3 +41,8 @@ export function isSubscriptionActive(sub: Subscription | null): boolean {
   if (!sub.currentPeriodEnd) return false;
   return new Date(sub.currentPeriodEnd).getTime() > Date.now();
 }
+
+/** Convenience: does the current user have an active subscription right now? */
+export async function hasActiveSubscription(): Promise<boolean> {
+  return isSubscriptionActive(await getSubscription());
+}

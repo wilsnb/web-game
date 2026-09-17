@@ -74,8 +74,15 @@ export default async function AccountPage() {
               </span>
             )}
             <div>
-              <div className="font-haas text-at-title-md font-medium text-at-ink">
-                {name}
+              <div className="flex items-center gap-xs">
+                <span className="font-haas text-at-title-md font-medium text-at-ink">
+                  {name}
+                </span>
+                {proActive && (
+                  <span className="rounded-at-xs bg-at-coral px-[6px] py-[2px] font-haas text-[11px] font-medium uppercase tracking-wide text-at-on-dark">
+                    Pro
+                  </span>
+                )}
               </div>
               <div className="font-haas text-at-body-md text-at-muted">
                 {user.email}

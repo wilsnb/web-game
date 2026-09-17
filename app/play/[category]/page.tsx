@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getAllQuizIds, getQuizById } from "@/lib/quizzes";
+import { isProGameId } from "@/data/catalog";
+import { hasActiveSubscription } from "@/lib/subscription/subscription";
 import { GameClient } from "@/components/GameClient";
 
 type PageProps = {
@@ -39,6 +41,12 @@ export default async function PlayPage({ params }: PageProps) {
 
   if (!quiz) {
     notFound();
+  }
+
+  // Server-side Pro gate: Pro games require an active subscription. Enforced
+  // here so it can't be bypassed by navigating straight to the URL.
+  if (isProGameId(category) && !(await hasActiveSubscription())) {
+    redirect("/subscribe?from=pro");
   }
 
   return <GameClient quiz={quiz} />;

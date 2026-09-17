@@ -24,13 +24,26 @@ export function GameCard({
   const soon = game.comingSoon;
   const isLink = !soon && Boolean(game.href);
 
-  const badge = soon ? (
+  const proBadge = game.pro ? (
+    <span className="rounded-at-xs bg-at-coral px-[6px] py-[2px] font-haas text-[11px] font-medium uppercase tracking-wide text-at-on-dark">
+      Pro
+    </span>
+  ) : null;
+
+  const statusBadge = soon ? (
     <span className="rounded-at-xs bg-at-surface-strong px-[6px] py-[2px] font-haas text-[11px] font-medium uppercase tracking-wide text-at-muted">
       Coming soon
     </span>
   ) : (
     <span className="rounded-at-xs bg-at-cream px-[6px] py-[2px] font-haas text-[11px] font-medium uppercase tracking-wide text-at-ink">
       New
+    </span>
+  );
+
+  const badge = (
+    <span className="flex items-center gap-xs">
+      {proBadge}
+      {statusBadge}
     </span>
   );
 

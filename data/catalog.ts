@@ -15,6 +15,8 @@ export interface CatalogGame {
   title: string;
   description: string;
   comingSoon: boolean;
+  /** Pro-only game — requires an active Qwardoo Pro subscription to play. */
+  pro?: boolean;
   /** Where a playable game links to. Omitted while a game is a placeholder. */
   href?: string;
 }
@@ -111,6 +113,7 @@ export const CATALOG: CatalogCategory[] = [
         title: "Speed Math Challenge",
         description: "How fast can you do the math?",
         comingSoon: true,
+        pro: true,
       },
     ],
   },
@@ -131,6 +134,7 @@ export const CATALOG: CatalogCategory[] = [
         title: "Memory Sequence Game",
         description: "Repeat the growing pattern without a slip.",
         comingSoon: true,
+        pro: true,
       },
     ],
   },
@@ -196,6 +200,15 @@ export function getAllCategoryUrlSlugs(): string[] {
 /** Total number of games across all categories. */
 export function getTotalGameCount(): number {
   return CATALOG.reduce((n, c) => n + c.games.length, 0);
+}
+
+/** Is the game with this id a Pro-only game? */
+export function isProGameId(id: string): boolean {
+  for (const c of CATALOG) {
+    const g = c.games.find((game) => game.id === id);
+    if (g) return Boolean(g.pro);
+  }
+  return false;
 }
 
 export interface SearchItem {
