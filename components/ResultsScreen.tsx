@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import type { GameState } from "@/lib/gameState";
 import { rankedTeams, winners } from "@/lib/gameState";
 import type { Quiz } from "@/lib/types";
@@ -20,6 +21,24 @@ export function ResultsScreen({
   const winnerLabel = isTie
     ? topTeams.map((t) => t.name).join(" & ")
     : topTeams[0]?.name;
+
+  // Save this finished game's result once (no-op for guests; server-gated).
+  const savedRef = useRef(false);
+  useEffect(() => {
+    if (savedRef.current) return;
+    savedRef.current = true;
+    fetch("/api/save-result", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        quizId: quiz.id,
+        quizTitle: quiz.title,
+        teams: state.teams.map((t) => ({ name: t.name, score: t.score })),
+      }),
+    }).catch(() => {
+      // Saving is best-effort; never block the results screen on it.
+    });
+  }, [quiz.id, quiz.title, state.teams]);
 
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center bg-tile-1 px-lg py-section text-body-on-dark">

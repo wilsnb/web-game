@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { getPlayerStats, tierForPoints, BADGE_TIERS } from "@/lib/stats";
+import { AccountTabs } from "@/components/AccountTabs";
 import { formatIdr, PLAN } from "@/lib/subscription/plan";
 import {
   getSubscription,
@@ -13,7 +13,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Your account",
-  description: "Your Qwardoo account, badge level, and gameplay stats.",
+  description: "Manage your Qwardoo account and membership.",
   alternates: { canonical: "/account" },
 };
 
@@ -41,8 +41,6 @@ export default async function AccountPage() {
       })
     : null;
 
-  const stats = await getPlayerStats();
-  const { current, next, pointsToNext } = tierForPoints(stats.totalPoints);
   const sub = await getSubscription();
   const proActive = isSubscriptionActive(sub);
 
@@ -55,7 +53,9 @@ export default async function AccountPage() {
           Your account
         </h1>
 
-        {/* Account info */}
+        <AccountTabs active="account" />
+
+        {/* Profile */}
         <div className="mt-lg rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card">
           <div className="flex items-center gap-md">
             {avatarUrl ? (
@@ -83,7 +83,7 @@ export default async function AccountPage() {
             </div>
           </div>
 
-          <dl className="mt-lg grid grid-cols-1 gap-sm sm:grid-cols-2">
+          <dl className="mt-lg grid grid-cols-1 gap-md sm:grid-cols-2">
             <div>
               <dt className="font-haas text-at-caption text-at-muted">Name</dt>
               <dd className="font-haas text-at-body-md text-at-ink">{name}</dd>
@@ -106,119 +106,70 @@ export default async function AccountPage() {
             )}
             <div>
               <dt className="font-haas text-at-caption text-at-muted">
-                Membership
+                Signed in with
               </dt>
-              <dd className="font-haas text-at-body-md text-at-ink">
-                {proActive ? (
-                  <>Qwardoo Pro (active)</>
-                ) : (
-                  <>
-                    Free ·{" "}
-                    <Link
-                      href="/subscribe"
-                      className="text-at-link hover:text-at-link-active"
-                    >
-                      Go Premium ({formatIdr(PLAN.priceIdr)}/mo)
-                    </Link>
-                  </>
-                )}
-              </dd>
+              <dd className="font-haas text-at-body-md text-at-ink">Google</dd>
             </div>
           </dl>
         </div>
 
-        {/* Stats */}
-        <div
-          id="stats"
-          className="mt-lg scroll-mt-[88px] rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card"
-        >
+        {/* Membership */}
+        <div className="mt-lg rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card">
           <h2 className="font-haas text-at-title-lg font-normal text-at-ink">
-            Your stats
+            Membership
           </h2>
-
-          {/* Badge tier */}
-          <div className="mt-md flex items-center gap-sm">
-            <span
-              className={`rounded-at-sm ${current.color} px-md py-[6px] font-haas text-at-body-md font-medium text-at-ink`}
-            >
-              {current.name}
-            </span>
-            <span className="font-haas text-at-body-md text-at-muted">
-              {stats.totalPoints.toLocaleString()} points
-              {next && pointsToNext !== null && (
-                <> · {pointsToNext.toLocaleString()} to {next.name}</>
-              )}
-            </span>
-          </div>
-
-          {/* Summary numbers */}
-          <div className="mt-lg grid grid-cols-2 gap-md sm:grid-cols-3">
-            <div>
-              <div className="font-haas text-at-display-md font-normal text-at-ink">
-                {stats.gamesPlayed}
-              </div>
-              <div className="font-haas text-at-caption text-at-muted">
-                Games played
-              </div>
-            </div>
-            <div>
-              <div className="font-haas text-at-display-md font-normal text-at-ink">
-                {stats.totalPoints.toLocaleString()}
-              </div>
-              <div className="font-haas text-at-caption text-at-muted">
-                Total points
-              </div>
-            </div>
-          </div>
-
-          {/* Per-quiz stats */}
-          <div className="mt-lg">
-            {stats.perQuiz.length === 0 ? (
-              <p className="rounded-at-md border border-dashed border-at-hairline p-md font-haas text-at-body-md text-at-muted">
-                No games played yet. Your scores and per-quiz stats will show up
-                here once you start playing.{" "}
-                <Link
-                  href="/#games"
-                  className="text-at-link hover:text-at-link-active"
-                >
-                  Find a game →
-                </Link>
+          {proActive ? (
+            <div className="mt-sm">
+              <p className="font-haas text-at-body-md text-at-ink">
+                <span className="font-medium">Qwardoo Pro</span> — active
               </p>
-            ) : (
-              <ul className="flex flex-col gap-xs">
-                {stats.perQuiz.map((q) => (
-                  <li
-                    key={q.quizId}
-                    className="flex items-center justify-between border-b border-at-hairline py-xs font-haas text-at-body-md text-at-ink last:border-b-0"
-                  >
-                    <span>{q.quizTitle}</span>
-                    <span className="text-at-muted">
-                      {q.timesPlayed}× · best {q.bestScore}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Tier ladder reference */}
-          <div className="mt-lg">
-            <p className="mb-xs font-haas text-at-caption uppercase tracking-wide text-at-muted">
-              Badge levels
-            </p>
-            <div className="flex flex-wrap gap-xs">
-              {BADGE_TIERS.map((tier) => (
-                <span
-                  key={tier.name}
-                  className={`rounded-at-xs ${tier.color} px-[8px] py-[3px] font-haas text-at-caption text-at-ink ${
-                    tier.name === current.name ? "" : "opacity-60"
-                  }`}
-                >
-                  {tier.name} · {tier.minPoints.toLocaleString()}+
-                </span>
-              ))}
+              {sub?.currentPeriodEnd && (
+                <p className="mt-xxs font-haas text-at-caption text-at-muted">
+                  Renews / expires on{" "}
+                  {new Date(sub.currentPeriodEnd).toLocaleDateString()}
+                </p>
+              )}
             </div>
-          </div>
+          ) : (
+            <div className="mt-sm">
+              <p className="font-haas text-at-body-md text-at-ink">
+                You&apos;re on the free plan. Every game is free to play.
+              </p>
+              <Link
+                href="/subscribe"
+                className="mt-sm inline-flex items-center justify-center rounded-at-lg bg-at-primary px-lg py-md font-haas text-at-button font-medium text-at-on-dark no-underline transition-colors hover:bg-at-primary-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
+              >
+                Go Premium · {formatIdr(PLAN.priceIdr)}/mo
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Preferences (placeholder — not yet persisted) */}
+        <div className="mt-lg rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card">
+          <h2 className="font-haas text-at-title-lg font-normal text-at-ink">
+            Preferences
+          </h2>
+          <p className="mt-sm font-haas text-at-body-md text-at-muted">
+            Game preferences (default players, timer, sound) will live here soon.
+          </p>
+        </div>
+
+        {/* Data & privacy */}
+        <div className="mt-lg rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card">
+          <h2 className="font-haas text-at-title-lg font-normal text-at-ink">
+            Data &amp; privacy
+          </h2>
+          <p className="mt-sm font-haas text-at-body-md text-at-muted">
+            Read how we handle your data in our{" "}
+            <Link
+              href="/privacy"
+              className="text-at-link hover:text-at-link-active"
+            >
+              Privacy Policy
+            </Link>
+            . To delete your account and data, see the contact details there.
+          </p>
         </div>
       </section>
 

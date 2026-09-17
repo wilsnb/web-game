@@ -41,11 +41,11 @@ export default async function CategoryPage({ params }: PageProps) {
   const available = category.games.filter((g) => !g.comingSoon).length;
 
   return (
-    <div className="min-h-screen bg-at-surface-soft">
+    <div className="min-h-screen">
       <SiteHeader />
 
       {/* Header band */}
-      <section className="bg-at-canvas">
+      <section className="bg-at-canvas/70 backdrop-blur-sm">
         <div className="mx-auto max-w-[1280px] px-md py-xl sm:px-lg">
           <nav aria-label="Breadcrumb" className="mb-sm">
             <Link

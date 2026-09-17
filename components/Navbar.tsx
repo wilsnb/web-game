@@ -251,7 +251,7 @@ function AccountMenu({ user }: { user: NavUser }) {
             Your account
           </Link>
           <Link
-            href="/account#stats"
+            href="/account/stats"
             role="menuitem"
             onClick={() => close()}
             className="flex items-center px-md py-[10px] font-haas text-at-body-md text-at-ink no-underline outline-none transition-colors hover:bg-at-surface-soft focus:bg-at-surface-soft"

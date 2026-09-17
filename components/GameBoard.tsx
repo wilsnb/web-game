@@ -85,6 +85,16 @@ export function GameBoard({
 
   return (
     <div className="mx-auto w-full max-w-content px-lg py-xl">
+      {/* Quiz title — always visible so players remember what they're playing */}
+      <div className="mb-lg border-b border-divider-soft pb-md text-center">
+        <p className="text-caption capitalize text-ink-muted-48">
+          {quiz.category} · Top {quiz.listLength}
+        </p>
+        <h1 className="mt-xxs text-display-md font-semibold tracking-tight text-ink">
+          {quiz.title}
+        </h1>
+      </div>
+
       {/* Round / guess status */}
       <div className="mb-lg flex items-center justify-between">
         <span className="text-caption text-ink-muted-48">

@@ -60,12 +60,60 @@ export interface PlayerStats {
   perQuiz: QuizStat[];
 }
 
+import { createSupabaseServerClient } from "./supabase/server";
+
+interface GameResultRow {
+  quiz_id: string;
+  quiz_title: string;
+  top_score: number;
+}
+
 /**
- * Reads the signed-in player's stats.
+ * Reads the signed-in player's stats, aggregated from their saved game_results.
  *
- * Placeholder: returns zeroes until gameplay persistence exists. Kept async so
- * swapping in a Supabase query later needs no signature change.
+ * "Points" = the sum of each game's top (winning) score. Games played = number
+ * of rows. Per-quiz = grouped by quiz with times played and best score.
+ * Returns zeroes when signed out or when no games have been saved yet.
  */
 export async function getPlayerStats(): Promise<PlayerStats> {
-  return { totalPoints: 0, gamesPlayed: 0, perQuiz: [] };
+  const empty: PlayerStats = { totalPoints: 0, gamesPlayed: 0, perQuiz: [] };
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return empty;
+
+  const { data, error } = await supabase
+    .from("game_results")
+    .select("quiz_id, quiz_title, top_score")
+    .eq("user_id", user.id);
+
+  if (error || !data || data.length === 0) return empty;
+
+  const rows = data as GameResultRow[];
+  const totalPoints = rows.reduce((n, r) => n + (r.top_score ?? 0), 0);
+
+  // Group by quiz.
+  const byQuiz = new Map<string, QuizStat>();
+  for (const r of rows) {
+    const existing = byQuiz.get(r.quiz_id);
+    if (existing) {
+      existing.timesPlayed += 1;
+      existing.bestScore = Math.max(existing.bestScore, r.top_score ?? 0);
+    } else {
+      byQuiz.set(r.quiz_id, {
+        quizId: r.quiz_id,
+        quizTitle: r.quiz_title,
+        timesPlayed: 1,
+        bestScore: r.top_score ?? 0,
+      });
+    }
+  }
+
+  const perQuiz = [...byQuiz.values()].sort(
+    (a, b) => b.timesPlayed - a.timesPlayed
+  );
+
+  return { totalPoints, gamesPlayed: rows.length, perQuiz };
 }
