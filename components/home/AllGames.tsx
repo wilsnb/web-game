@@ -1,18 +1,17 @@
 import Link from "next/link";
-import { getAllGames } from "@/data/catalog";
-import { GameCard } from "@/components/GameCard";
+import { CATALOG } from "@/data/catalog";
+import { CategoryRow } from "./CategoryRow";
 
 /**
- * Single "All games & activities" grid — every game, 3 per row (compact tiles),
- * with one "Browse all games" button. Replaces the per-category home sections.
+ * "All games & activities" — one horizontal, swipeable row per category
+ * (Trivia & Rankings first, following catalog order). Each row caps at 8
+ * tiles with a "View all" link to the full category page.
  */
 export function AllGames() {
-  const games = getAllGames();
-
   return (
     <section id="games" className="scroll-mt-[72px]">
       <div className="mx-auto max-w-[1280px] px-md py-section sm:px-lg">
-        <div className="mb-lg">
+        <div className="mb-xl">
           <p className="font-haas text-at-caption uppercase tracking-wide text-at-muted">
             All games &amp; activities
           </p>
@@ -21,13 +20,11 @@ export function AllGames() {
           </h2>
         </div>
 
-        <ul className="grid grid-cols-1 gap-md sm:grid-cols-2 lg:grid-cols-3">
-          {games.map((game) => (
-            <li key={game.id}>
-              <GameCard game={game} thumbnail={game.thumbnail} layout="tile" />
-            </li>
+        <div className="flex flex-col gap-xl">
+          {CATALOG.map((category) => (
+            <CategoryRow key={category.slug} category={category} />
           ))}
-        </ul>
+        </div>
 
         <div className="mt-xl flex justify-center">
           <Link

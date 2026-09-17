@@ -10,11 +10,11 @@ interface QA {
 const FAQS: QA[] = [
   {
     q: "Do I need to create an account to play?",
-    a: "No. Every game is playable as a guest — just pick one and start. Signing in with Google is optional and only used to save your progress and scores.",
+    a: "No — every game is playable as a guest. Signing in with Google is optional, but it unlocks the extras: your scores and stats are saved, you earn badge levels as you rack up points, you appear on the leaderboards, and you get to see the real top-20 answers revealed after each game.",
   },
   {
     q: "Is it free to play?",
-    a: "Yes, completely free. There are no payments, subscriptions, or ads.",
+    a: "Most games are completely free — no ads, no catch. A few games are marked Premium and need a Qwardoo Pro subscription to play, but everything else stays free for everyone.",
   },
   {
     q: "How many players can play together?",
