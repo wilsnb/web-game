@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { GameSettings, GameState } from "@/lib/gameState";
 import type { Quiz } from "@/lib/types";
-import { Scoreboard } from "./Scoreboard";
 import { PrimaryButton } from "./Buttons";
 
 /** Feedback banner for the last guess — correct/wrong only, never a hint. */
@@ -177,12 +176,94 @@ export function GameBoard({
 
       <GuessFeedback state={state} />
 
-      {/* Running scores */}
+      {/* Team blocks — setup order (Team 1 leftmost), current turn highlighted */}
       <section className="mt-xl">
         <h3 className="mb-sm text-caption-strong font-semibold uppercase tracking-wide text-ink-muted-48">
           Scores
         </h3>
-        <Scoreboard teams={state.teams} currentTeamId={currentTeam.id} />
+        <div className="flex flex-wrap gap-sm">
+          {state.teams.map((team) => {
+            const isCurrent = team.id === currentTeam.id;
+            return (
+              <div
+                key={team.id}
+                className={`min-w-[110px] flex-1 rounded-lg border p-md text-center transition-colors ${
+                  isCurrent
+                    ? "border-primary bg-primary/5"
+                    : "border-divider-soft bg-canvas"
+                }`}
+              >
+                <div
+                  className={`truncate text-caption font-semibold ${
+                    isCurrent ? "text-primary" : "text-ink-muted-80"
+                  }`}
+                  title={team.name}
+                >
+                  {team.name}
+                </div>
+                <div className="mt-xxs text-display-md font-semibold tabular-nums text-ink">
+                  {team.score}
+                </div>
+                <div className="text-caption text-ink-muted-48">pts</div>
+                {isCurrent && (
+                  <div className="mt-xxs text-caption font-semibold text-primary">
+                    Your turn
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Guess history — whole game, newest first, scrollable */}
+      <section className="mt-xl">
+        <h3 className="mb-sm text-caption-strong font-semibold uppercase tracking-wide text-ink-muted-48">
+          Guess history
+        </h3>
+        {state.history.length === 0 ? (
+          <p className="rounded-md border border-dashed border-divider-soft p-md text-caption text-ink-muted-48">
+            No guesses yet. Every guess this game will show up here.
+          </p>
+        ) : (
+          <ul className="flex max-h-[280px] flex-col gap-xs overflow-y-auto pr-xs">
+            {[...state.history].reverse().map((h) => (
+              <li
+                key={h.id}
+                className="flex items-center justify-between gap-sm rounded-md border border-divider-soft bg-canvas px-md py-sm"
+              >
+                <span className="flex min-w-0 items-center gap-sm">
+                  <span
+                    className="w-[84px] flex-none truncate text-caption font-semibold text-ink-muted-80"
+                    title={h.teamName}
+                  >
+                    {h.teamName}
+                  </span>
+                  <span className="truncate text-body-apple text-ink">
+                    {h.skipped ? (
+                      <span className="italic text-ink-muted-48">passed</span>
+                    ) : (
+                      `"${h.guess}"`
+                    )}
+                  </span>
+                </span>
+                <span className="flex-none text-caption">
+                  {h.correct ? (
+                    <span className="font-semibold text-primary">
+                      ✓ {h.matchedAnswer} · #{h.matchedRank} · +{h.points}
+                    </span>
+                  ) : h.alreadyClaimed ? (
+                    <span className="text-ink-muted-48">already found</span>
+                  ) : h.skipped ? (
+                    <span className="text-ink-muted-48">—</span>
+                  ) : (
+                    <span className="text-ink-muted-48">✗ not on list</span>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );

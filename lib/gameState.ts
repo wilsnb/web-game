@@ -31,6 +31,20 @@ export interface LastGuess {
   alreadyClaimed?: boolean;
 }
 
+/** One entry in the running guess history (shown on the play screen). */
+export interface HistoryEntry {
+  id: number; // incrementing, for stable keys + ordering
+  teamId: number;
+  teamName: string;
+  guess: string;
+  correct: boolean;
+  matchedAnswer?: string;
+  matchedRank?: number;
+  points?: number;
+  alreadyClaimed?: boolean;
+  skipped?: boolean;
+}
+
 export interface GameState {
   phase: GamePhase;
   teams: Team[];
@@ -42,6 +56,8 @@ export interface GameState {
   claimedRanks: number[];
   totalFound: number;
   lastGuess: LastGuess | null;
+  // Full guess history, oldest first (UI renders newest first).
+  history: HistoryEntry[];
 }
 
 export interface InitArgs {
@@ -73,6 +89,7 @@ export function createInitialState(quiz: Quiz, settings: GameSettings): GameStat
     claimedRanks: [],
     totalFound: 0,
     lastGuess: null,
+    history: [],
   };
 }
 
@@ -145,6 +162,14 @@ export function makeReducer(quiz: Quiz, settings: GameSettings) {
         if (state.phase !== "playing") return state;
         const currentTeam = state.teams[state.currentTeamIndex];
         const turn = advanceTurn(state, settings);
+        const historyEntry: HistoryEntry = {
+          id: state.history.length,
+          teamId: currentTeam.id,
+          teamName: currentTeam.name,
+          guess: "",
+          correct: false,
+          skipped: true,
+        };
         return {
           ...state,
           ...turn,
@@ -153,6 +178,7 @@ export function makeReducer(quiz: Quiz, settings: GameSettings) {
             guess: "",
             correct: false,
           },
+          history: [...state.history, historyEntry],
         };
       }
 
@@ -206,12 +232,25 @@ export function makeReducer(quiz: Quiz, settings: GameSettings) {
 
         const turn = advanceTurn(state, settings);
 
+        const historyEntry: HistoryEntry = {
+          id: state.history.length,
+          teamId: currentTeam.id,
+          teamName: currentTeam.name,
+          guess: action.guess,
+          correct: lastGuess.correct,
+          matchedAnswer: lastGuess.matchedAnswer,
+          matchedRank: lastGuess.matchedRank,
+          points: lastGuess.points,
+          alreadyClaimed: lastGuess.alreadyClaimed,
+        };
+
         return {
           ...state,
           teams,
           claimedRanks,
           totalFound,
           lastGuess,
+          history: [...state.history, historyEntry],
           ...turn,
         };
       }
