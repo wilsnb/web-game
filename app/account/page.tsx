@@ -5,6 +5,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { AccountTabs } from "@/components/AccountTabs";
+import { ProfileVisibilityToggle } from "@/components/ProfileVisibilityToggle";
+import { getProfile } from "@/lib/profile";
 import { formatIdr, PLAN } from "@/lib/subscription/plan";
 import {
   getSubscription,
@@ -25,12 +27,12 @@ export default async function AccountPage() {
 
   if (!user) redirect("/login?next=/account");
 
+  // Existing users without a username must pick one first.
+  const profile = await getProfile();
+  if (!profile?.username) redirect("/onboarding?next=/account");
+
   const meta = user.user_metadata ?? {};
-  const name =
-    (meta.full_name as string) ||
-    (meta.name as string) ||
-    user.email?.split("@")[0] ||
-    "Player";
+  const name = profile.username;
   const avatarUrl =
     (meta.avatar_url as string) || (meta.picture as string) || null;
   const joined = user.created_at
@@ -92,7 +94,9 @@ export default async function AccountPage() {
 
           <dl className="mt-lg grid grid-cols-1 gap-md sm:grid-cols-2">
             <div>
-              <dt className="font-haas text-at-caption text-at-muted">Name</dt>
+              <dt className="font-haas text-at-caption text-at-muted">
+                Username
+              </dt>
               <dd className="font-haas text-at-body-md text-at-ink">{name}</dd>
             </div>
             <div>
@@ -150,6 +154,20 @@ export default async function AccountPage() {
               </Link>
             </div>
           )}
+        </div>
+
+        {/* Profile visibility */}
+        <div className="mt-lg rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card">
+          <h2 className="font-haas text-at-title-lg font-normal text-at-ink">
+            Profile visibility
+          </h2>
+          <p className="mt-sm font-haas text-at-body-md text-at-muted">
+            When your profile is public, your username can appear on
+            leaderboards. Turn this off to stay off the leaderboards.
+          </p>
+          <div className="mt-md">
+            <ProfileVisibilityToggle initialPublic={profile.isPublic} />
+          </div>
         </div>
 
         {/* Preferences (placeholder — not yet persisted) */}

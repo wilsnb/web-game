@@ -14,7 +14,16 @@ export async function getNavUser(): Promise<NavUser | null> {
   if (!user) return null;
 
   const meta = user.user_metadata ?? {};
+
+  // Prefer the chosen username; fall back to Google name only pre-onboarding.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("username")
+    .eq("id", user.id)
+    .maybeSingle();
+
   const name =
+    profile?.username ||
     (meta.full_name as string) ||
     (meta.name as string) ||
     user.email?.split("@")[0] ||

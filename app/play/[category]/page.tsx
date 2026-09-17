@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { getAllQuizIds, getQuizById } from "@/lib/quizzes";
 import { isProGameId } from "@/data/catalog";
 import { hasActiveSubscription } from "@/lib/subscription/subscription";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { GameClient } from "@/components/GameClient";
 
 type PageProps = {
@@ -13,6 +14,10 @@ type PageProps = {
 export function generateStaticParams() {
   return getAllQuizIds().map((category) => ({ category }));
 }
+
+// This page reads the auth session (for the answer-reveal gate + Pro gate),
+// so it must render per-request rather than being cached statically.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -49,5 +54,11 @@ export default async function PlayPage({ params }: PageProps) {
     redirect("/subscribe?from=pro");
   }
 
-  return <GameClient quiz={quiz} />;
+  // Whether the player is signed in (controls the answer-reveal gate).
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return <GameClient quiz={quiz} isSignedIn={Boolean(user)} />;
 }

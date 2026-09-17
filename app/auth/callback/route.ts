@@ -15,6 +15,22 @@ export async function GET(request: Request) {
     const supabase = await createSupabaseServerClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // New (or username-less) users must pick a username first.
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", user.id)
+          .maybeSingle();
+        if (!profile?.username) {
+          const nextParam =
+            next && next !== "/" ? `?next=${encodeURIComponent(next)}` : "";
+          return NextResponse.redirect(`${origin}/onboarding${nextParam}`);
+        }
+      }
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

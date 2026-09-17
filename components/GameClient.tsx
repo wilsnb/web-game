@@ -15,7 +15,13 @@ type Screen = "setup" | "play" | "results";
  * Cross-category navigation stays a full page load (handled by <Link> elsewhere);
  * only these three states transition client-side.
  */
-export function GameClient({ quiz }: { quiz: Quiz }) {
+export function GameClient({
+  quiz,
+  isSignedIn = false,
+}: {
+  quiz: Quiz;
+  isSignedIn?: boolean;
+}) {
   const [screen, setScreen] = useState<Screen>("setup");
   const [settings, setSettings] = useState<GameSettings | null>(null);
 
@@ -35,6 +41,7 @@ export function GameClient({ quiz }: { quiz: Quiz }) {
           quiz={quiz}
           settings={settings}
           screen={screen}
+          isSignedIn={isSignedIn}
           onFinished={() => setScreen("results")}
           onReplay={() => setScreen("setup")}
         />
@@ -50,12 +57,14 @@ function ActiveGame({
   quiz,
   settings,
   screen,
+  isSignedIn,
   onFinished,
   onReplay,
 }: {
   quiz: Quiz;
   settings: GameSettings;
   screen: Screen;
+  isSignedIn: boolean;
   onFinished: () => void;
   onReplay: () => void;
 }) {
@@ -86,6 +95,7 @@ function ActiveGame({
       <ResultsScreen
         quiz={quiz}
         state={state}
+        isSignedIn={isSignedIn}
         onReplay={() => {
           dispatch({ type: "RESET" });
           onReplay();

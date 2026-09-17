@@ -76,6 +76,14 @@ export function Navbar({
           Random
         </button>
 
+        {/* Leaderboard */}
+        <Link
+          href="/leaderboard"
+          className="hidden font-haas text-at-body-md text-at-link no-underline transition-colors hover:text-at-link-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px] sm:inline-flex"
+        >
+          Leaderboard
+        </Link>
+
         {/* Search (functional) — grows into the middle, hidden on small screens */}
         <div className="ml-auto flex flex-1 justify-end md:ml-md md:justify-center">
           <SearchBar index={searchIndex} />
