@@ -4,6 +4,11 @@ import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import type { Quiz } from "@/lib/types";
 import type { GameSettings, GameState } from "@/lib/gameState";
 import { createInitialState, makeReducer } from "@/lib/gameState";
+import {
+  stashFinishedGame,
+  loadFinishedGame,
+  clearFinishedGame,
+} from "@/lib/gameStash";
 import { SetupForm } from "./SetupForm";
 import { GameBoard } from "./GameBoard";
 import { ResultsScreen } from "./ResultsScreen";
@@ -11,9 +16,10 @@ import { ResultsScreen } from "./ResultsScreen";
 type Screen = "setup" | "play" | "results";
 
 /**
- * Orchestrates the three in-page states for one quiz.
- * Cross-category navigation stays a full page load (handled by <Link> elsewhere);
- * only these three states transition client-side.
+ * Orchestrates the in-page states for one quiz. Also handles restoring a
+ * finished game from localStorage — so if a guest finishes, leaves to log in
+ * (from the reveal or rating), and returns, they land back on the exact
+ * results screen instead of a restart.
  */
 export function GameClient({
   quiz,
@@ -25,12 +31,43 @@ export function GameClient({
   const [screen, setScreen] = useState<Screen>("setup");
   const [settings, setSettings] = useState<GameSettings | null>(null);
 
+  // A finished game restored from localStorage (e.g. after a login round-trip).
+  const [restored, setRestored] = useState<GameState | null>(null);
+  const [checkedStash, setCheckedStash] = useState(false);
+
+  useEffect(() => {
+    const stashed = loadFinishedGame(quiz.id);
+    if (stashed) setRestored(stashed);
+    setCheckedStash(true);
+  }, [quiz.id]);
+
+  // Avoid a flash of the setup form before we've checked localStorage.
+  if (!checkedStash) return null;
+
+  // Restored results screen (returned here after logging in mid-results).
+  if (restored && screen === "setup") {
+    return (
+      <RestoredResults
+        quiz={quiz}
+        state={restored}
+        isSignedIn={isSignedIn}
+        onReplay={() => {
+          clearFinishedGame(quiz.id);
+          setRestored(null);
+          setScreen("setup");
+        }}
+      />
+    );
+  }
+
   return (
     <>
       {screen === "setup" && (
         <SetupForm
           quiz={quiz}
           onStart={(s) => {
+            // Starting fresh clears any old stashed result.
+            clearFinishedGame(quiz.id);
             setSettings(s);
             setScreen("play");
           }}
@@ -90,6 +127,13 @@ function ActiveGame({
     }
   }, [state.phase, screen, onFinished]);
 
+  // Stash the finished game so a login round-trip can restore this exact screen.
+  useEffect(() => {
+    if (state.phase === "finished") {
+      stashFinishedGame(quiz.id, state);
+    }
+  }, [state.phase, quiz.id, state]);
+
   if (screen === "results" || state.phase === "finished") {
     return (
       <ResultsScreen
@@ -97,6 +141,7 @@ function ActiveGame({
         state={state}
         isSignedIn={isSignedIn}
         onReplay={() => {
+          clearFinishedGame(quiz.id);
           dispatch({ type: "RESET" });
           onReplay();
         }}
@@ -111,6 +156,29 @@ function ActiveGame({
       state={state}
       onGuess={onGuess}
       onSkip={onSkip}
+    />
+  );
+}
+
+/** Renders a results screen rebuilt from a stashed finished game. */
+function RestoredResults({
+  quiz,
+  state,
+  isSignedIn,
+  onReplay,
+}: {
+  quiz: Quiz;
+  state: GameState;
+  isSignedIn: boolean;
+  onReplay: () => void;
+}) {
+  return (
+    <ResultsScreen
+      quiz={quiz}
+      state={state}
+      isSignedIn={isSignedIn}
+      restored
+      onReplay={onReplay}
     />
   );
 }

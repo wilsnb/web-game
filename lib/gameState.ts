@@ -76,7 +76,7 @@ export type GameAction =
 export function createInitialState(quiz: Quiz, settings: GameSettings): GameState {
   const teams: Team[] = settings.teamNames.map((name, i) => ({
     id: i,
-    name: name.trim() || `Team ${i + 1}`,
+    name: name.trim() || `Player ${i + 1}`,
     score: 0,
   }));
 

@@ -1,21 +1,25 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef } from "react";
 import type { GameState } from "@/lib/gameState";
 import { rankedTeams, winners } from "@/lib/gameState";
+import { clearFinishedGame } from "@/lib/gameStash";
 import type { Quiz } from "@/lib/types";
 import { PrimaryButton, SecondaryLink } from "./Buttons";
+import { RatingButtons } from "./RatingButtons";
+import { AnswerReveal } from "./AnswerReveal";
 
 export function ResultsScreen({
   quiz,
   state,
   isSignedIn = false,
+  restored = false,
   onReplay,
 }: {
   quiz: Quiz;
   state: GameState;
   isSignedIn?: boolean;
+  restored?: boolean;
   onReplay?: () => void;
 }) {
   const sorted = rankedTeams(state.teams);
@@ -26,6 +30,8 @@ export function ResultsScreen({
     : topTeams[0]?.name;
 
   // Save this finished game's result once (no-op for guests; server-gated).
+  // On a restored game the player may have just logged in, so this is what
+  // finally persists their guest game to their account.
   const savedRef = useRef(false);
   useEffect(() => {
     if (savedRef.current) return;
@@ -38,10 +44,19 @@ export function ResultsScreen({
         quizTitle: quiz.title,
         teams: state.teams.map((t) => ({ name: t.name, score: t.score })),
       }),
-    }).catch(() => {
-      // Saving is best-effort; never block the results screen on it.
-    });
-  }, [quiz.id, quiz.title, state.teams]);
+    })
+      .then(async (res) => {
+        // Once a restored game is safely saved for a signed-in user, clear the
+        // stash so it can't be re-saved on a later visit.
+        if (restored && isSignedIn && res.ok) {
+          const data = await res.json().catch(() => null);
+          if (data?.saved) clearFinishedGame(quiz.id);
+        }
+      })
+      .catch(() => {
+        // Saving is best-effort; never block the results screen on it.
+      });
+  }, [quiz.id, quiz.title, state.teams, restored, isSignedIn]);
 
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center bg-tile-1 px-lg py-section text-body-on-dark">
@@ -92,79 +107,33 @@ export function ResultsScreen({
           })}
         </ol>
 
-        {/* Reveal the real Top 20 (safe now — game is over). Gated: signed-in
-            users see it clearly; guests see it blurred with a login prompt. */}
-        {(() => {
-          const top = quiz.list
+        {/* Reveal the real Top 20 (safe now — game is over). Always starts
+            blurred; a "View answers" click reveals it (signed in), or a login
+            prompt (signed out). Login returns to /play/<id> where the stashed
+            finished game restores this screen. */}
+        <AnswerReveal
+          entries={quiz.list
             .filter((e) => e.rank <= 20)
-            .sort((a, b) => a.rank - b.rank);
-          const foundRanks = top
-            .filter((e) => state.claimedRanks.includes(e.rank))
-            .map((e) => e.rank);
-          const revealNext = `/reveal/${quiz.id}${
-            foundRanks.length ? `?found=${foundRanks.join(",")}` : ""
-          }`;
+            .sort((a, b) => a.rank - b.rank)
+            .map((e) => ({
+              rank: e.rank,
+              answer: e.answer,
+              found: state.claimedRanks.includes(e.rank),
+            }))}
+          isSignedIn={isSignedIn}
+          loginNext={`/play/${quiz.id}`}
+        />
 
-          return (
-            <div className="mx-auto mt-section w-full max-w-[420px] text-left">
-              <h2 className="mb-sm text-center text-caption-strong font-semibold uppercase tracking-wide text-body-muted">
-                The actual top {top.length}
-              </h2>
+        {/* Rate this game */}
+        <div className="mt-section">
+          <RatingButtons
+            gameId={quiz.id}
+            isSignedIn={isSignedIn}
+            loginNext={`/play/${quiz.id}`}
+          />
+        </div>
 
-              <div className="relative">
-                <ol
-                  className={`flex flex-col transition-all ${
-                    isSignedIn ? "" : "pointer-events-none select-none blur-md"
-                  }`}
-                  aria-hidden={!isSignedIn}
-                >
-                  {top.map((entry) => {
-                    const found = state.claimedRanks.includes(entry.rank);
-                    return (
-                      <li
-                        key={entry.rank}
-                        className="flex items-center gap-sm border-b border-white/10 py-sm last:border-b-0"
-                      >
-                        <span className="w-[28px] text-caption tabular-nums text-body-muted">
-                          #{entry.rank}
-                        </span>
-                        <span
-                          className={`flex-1 text-body-apple ${
-                            found
-                              ? "font-semibold text-primary-on-dark"
-                              : "text-body-on-dark"
-                          }`}
-                        >
-                          {entry.answer}
-                        </span>
-                        <span className="text-caption text-body-muted">
-                          {found ? "found" : "missed"}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ol>
-
-                {/* Login gate overlay */}
-                {!isSignedIn && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-sm text-center">
-                    <p className="max-w-[280px] text-body-apple font-semibold text-body-on-dark">
-                      Log in to reveal the full top {top.length}
-                    </p>
-                    <Link
-                      href={`/login?next=${encodeURIComponent(revealNext)}`}
-                      className="press-scale focus-ring inline-flex items-center justify-center rounded-pill bg-primary px-[22px] py-[11px] text-body-apple text-white no-underline"
-                    >
-                      Log in to reveal
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })()}
-
-        <div className="mt-section flex flex-col items-center justify-center gap-sm sm:flex-row">
+        <div className="mt-xl flex flex-col items-center justify-center gap-sm sm:flex-row">
           <PrimaryButton onClick={onReplay} className="min-w-[180px]">
             Play again
           </PrimaryButton>

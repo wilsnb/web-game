@@ -41,7 +41,7 @@ export function DemoSection({ playHref }: { playHref: string | null }) {
         {/* Static round mockup */}
         <div aria-hidden className="rounded-at-lg bg-at-canvas p-lg shadow-at-card">
           <p className="font-haas text-at-caption uppercase tracking-wide text-at-muted">
-            Round 2 · Team B&apos;s turn
+            Round 2 · Player 2&apos;s turn
           </p>
           <h3 className="mt-xxs font-haas text-at-title-md text-at-ink">
             Top 100 Most Streamed Artists
@@ -78,11 +78,11 @@ export function DemoSection({ playHref }: { playHref: string | null }) {
           {/* Mini scoreboard */}
           <div className="mt-md flex flex-col gap-xs">
             <div className="flex items-center justify-between font-haas text-at-body-md text-at-ink">
-              <span>Team A</span>
+              <span>Player 1</span>
               <span>241</span>
             </div>
             <div className="flex items-center justify-between font-haas text-at-body-md text-at-ink">
-              <span className="font-medium">Team B</span>
+              <span className="font-medium">Player 2</span>
               <span className="font-medium">265</span>
             </div>
           </div>

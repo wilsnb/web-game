@@ -68,13 +68,13 @@ export function SetupForm({
 }) {
   const [teamCount, setTeamCount] = useState(2);
   const [teamNames, setTeamNames] = useState<string[]>([
-    "Team 1",
-    "Team 2",
-    "Team 3",
-    "Team 4",
-    "Team 5",
-    "Team 6",
-    "Team 7",
+    "Player 1",
+    "Player 2",
+    "Player 3",
+    "Player 4",
+    "Player 5",
+    "Player 6",
+    "Player 7",
   ]);
   const [rounds, setRounds] = useState(3);
   const [guessesPerRound, setGuessesPerRound] = useState(3);
@@ -92,7 +92,7 @@ export function SetupForm({
   function handleStart() {
     const names = teamNames
       .slice(0, teamCount)
-      .map((n, i) => (n.trim() ? n.trim() : `Team ${i + 1}`));
+      .map((n, i) => (n.trim() ? n.trim() : `Player ${i + 1}`));
     onStart({
       teamNames: names,
       rounds,
@@ -120,28 +120,28 @@ export function SetupForm({
 
       <section className="mb-xl">
         <h2 className="mb-sm text-tagline font-semibold text-ink">
-          Players &amp; Teams
+          Players
         </h2>
         <Stepper
-          label="How many teams?"
+          label="How many players?"
           value={teamCount}
           min={MIN_TEAMS}
           max={MAX_TEAMS}
           onChange={setTeamCount}
-          hint={`${MIN_TEAMS}–${MAX_TEAMS} players or teams`}
+          hint={`${MIN_TEAMS}–${MAX_TEAMS} players`}
         />
         <div className="mt-lg flex flex-col gap-sm">
           {Array.from({ length: teamCount }).map((_, i) => (
             <label key={i} className="flex items-center gap-sm">
               <span className="w-[80px] text-caption text-ink-muted-48">
-                Team {i + 1}
+                Player {i + 1}
               </span>
               <input
                 type="text"
                 value={teamNames[i]}
                 maxLength={24}
                 onChange={(e) => updateName(i, e.target.value)}
-                placeholder={`Team ${i + 1}`}
+                placeholder={`Player ${i + 1}`}
                 className="focus-ring h-[44px] flex-1 rounded-pill border border-black/[0.08] bg-canvas px-[20px] text-body-apple text-ink"
               />
             </label>
@@ -160,7 +160,7 @@ export function SetupForm({
           hint="How many times play cycles through"
         />
         <Stepper
-          label="Guesses per round, per team"
+          label="Guesses per round, per player"
           value={guessesPerRound}
           min={1}
           max={MAX_GUESSES}

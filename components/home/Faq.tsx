@@ -18,7 +18,7 @@ const FAQS: QA[] = [
   },
   {
     q: "How many players can play together?",
-    a: "Games are pass-and-play on one shared device, for 1 to 7 players or teams. You take turns on the same screen — there are no separate rooms or codes.",
+    a: "Games are pass-and-play on one shared device, for 1 to 7 players. You take turns on the same screen — there are no separate rooms or codes.",
   },
   {
     q: "Do I need to download anything?",
