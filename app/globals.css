@@ -59,35 +59,95 @@ body {
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  overflow: hidden;
   background-color: #f5f5f7; /* parchment base */
-  background-image:
-    radial-gradient(42% 42% at 18% 22%, rgba(170, 45, 0, 0.20), transparent 60%),
-    radial-gradient(40% 40% at 82% 18%, rgba(252, 171, 121, 0.28), transparent 60%),
-    radial-gradient(46% 46% at 78% 82%, rgba(168, 216, 196, 0.32), transparent 62%),
-    radial-gradient(44% 44% at 22% 80%, rgba(244, 211, 94, 0.26), transparent 62%),
-    radial-gradient(50% 50% at 50% 50%, rgba(245, 233, 212, 0.30), transparent 70%);
-  background-size: 220% 220%;
-  animation: ambient-drift 38s ease-in-out infinite alternate;
 }
 
-@keyframes ambient-drift {
+/*
+ * TWO overlapping, independently-rotating blob layers create the marbled,
+ * "textured" flow (not a single group that pulses to one color). Each layer:
+ *  - is larger than the viewport and rotates from its center, so blobs sweep
+ *    across each other like liquid,
+ *  - carries several differently-sized pastel blobs from the signature palette,
+ *  - is heavily blurred so the blobs bleed into a soft aurora.
+ * Different rotation directions + speeds keep it constantly re-mixing.
+ */
+.ambient-bg::before,
+.ambient-bg::after {
+  content: "";
+  position: absolute;
+  /* Big enough that rotation never exposes a bare corner. */
+  inset: -75%;
+  filter: blur(64px) saturate(1.3);
+  will-change: transform;
+}
+
+/* Layer 1 — warm ribbons (coral, peach, yellow, cream). Elongated, angled
+   ELLIPTICAL streaks (not circles) read as flowing aurora bands. Rotates. */
+.ambient-bg::before {
+  background-image:
+    radial-gradient(70% 22% at 30% 30%, rgba(170, 45, 0, 0.45), transparent 70%),
+    radial-gradient(80% 18% at 65% 55%, rgba(252, 171, 121, 0.5), transparent 72%),
+    radial-gradient(60% 26% at 50% 78%, rgba(244, 211, 94, 0.46), transparent 72%),
+    radial-gradient(90% 20% at 40% 12%, rgba(245, 233, 212, 0.5), transparent 74%),
+    conic-gradient(
+      from 200deg at 60% 45%,
+      transparent 0deg,
+      rgba(170, 45, 0, 0.28) 40deg,
+      transparent 120deg,
+      rgba(252, 171, 121, 0.28) 200deg,
+      transparent 300deg
+    );
+  animation: aurora-spin-cw 48s linear infinite;
+}
+
+/* Layer 2 — cool mint + warm accent ribbons, angled the other way and
+   rotating counter-clockwise so the bands cross and weave. */
+.ambient-bg::after {
+  background-image:
+    radial-gradient(85% 20% at 70% 35%, rgba(168, 216, 196, 0.5), transparent 72%),
+    radial-gradient(65% 24% at 25% 62%, rgba(168, 216, 196, 0.42), transparent 72%),
+    radial-gradient(75% 18% at 55% 20%, rgba(252, 171, 121, 0.4), transparent 72%),
+    radial-gradient(70% 22% at 45% 90%, rgba(244, 211, 94, 0.4), transparent 72%),
+    conic-gradient(
+      from 20deg at 40% 60%,
+      transparent 0deg,
+      rgba(168, 216, 196, 0.3) 60deg,
+      transparent 150deg,
+      rgba(170, 45, 0, 0.22) 240deg,
+      transparent 330deg
+    );
+  animation: aurora-spin-ccw 62s linear infinite;
+}
+
+@keyframes aurora-spin-cw {
   0% {
-    background-position:
-      0% 0%, 100% 0%, 100% 100%, 0% 100%, 50% 50%;
+    transform: rotate(0deg) scale(1);
   }
   50% {
-    background-position:
-      45% 30%, 55% 50%, 40% 60%, 55% 70%, 40% 60%;
+    transform: rotate(180deg) scale(1.15);
   }
   100% {
-    background-position:
-      20% 55%, 85% 15%, 70% 95%, 20% 45%, 60% 40%;
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes aurora-spin-ccw {
+  0% {
+    transform: rotate(0deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(-180deg) scale(1);
+  }
+  100% {
+    transform: rotate(-360deg) scale(1.1);
   }
 }
 
 /* Hold still for users who prefer reduced motion. */
 @media (prefers-reduced-motion: reduce) {
-  .ambient-bg {
+  .ambient-bg::before,
+  .ambient-bg::after {
     animation: none;
   }
 }
