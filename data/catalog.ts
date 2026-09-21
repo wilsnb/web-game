@@ -53,6 +53,62 @@ export const CATALOG: CatalogCategory[] = [
         comingSoon: false,
         href: "/play/top-100-highest-paid-athletes",
       },
+      {
+        id: "best-selling-music-artists",
+        title: "Top 25 Best-Selling Music Artists of All Time",
+        description:
+          "The acts that have sold the most records across all of music history.",
+        comingSoon: false,
+        href: "/play/best-selling-music-artists",
+      },
+      {
+        id: "most-populous-us-states",
+        title: "Top 20 Most Populous U.S. States",
+        description:
+          "Rank America's biggest states by how many people call them home.",
+        comingSoon: false,
+        href: "/play/most-populous-us-states",
+      },
+      {
+        id: "highest-grossing-films",
+        title: "Top 15 Highest-Grossing Films of All Time",
+        description:
+          "The blockbusters that made the most money at the global box office.",
+        comingSoon: false,
+        href: "/play/highest-grossing-films",
+      },
+      {
+        id: "most-visited-websites",
+        title: "Top 15 Most Visited Websites in the World",
+        description:
+          "The sites that pull the most traffic on the entire internet.",
+        comingSoon: false,
+        href: "/play/most-visited-websites",
+      },
+      {
+        id: "nba-all-time-scorers",
+        title: "Top 12 NBA All-Time Leading Scorers",
+        description:
+          "The legends who racked up the most career points in NBA history.",
+        comingSoon: false,
+        href: "/play/nba-all-time-scorers",
+      },
+      {
+        id: "most-populous-countries",
+        title: "Top 10 Most Populous Countries",
+        description:
+          "Name the ten nations where the most people on Earth live.",
+        comingSoon: false,
+        href: "/play/most-populous-countries",
+      },
+      {
+        id: "most-consumed-beverages",
+        title: "Top 10 Most Consumed Beverages Worldwide",
+        description:
+          "The drinks the world pours most, from the everyday to the indulgent.",
+        comingSoon: false,
+        href: "/play/most-consumed-beverages",
+      },
     ],
   },
   {
