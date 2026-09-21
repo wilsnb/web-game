@@ -29,7 +29,7 @@ export function AllGames() {
         <div className="mt-xl flex justify-center">
           <Link
             href="/category"
-            className="inline-flex items-center justify-center rounded-at-lg border border-at-hairline bg-at-canvas px-lg py-md font-haas text-at-button font-medium text-at-ink no-underline transition-all hover:border-at-border-strong hover:shadow-at-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
+            className="inline-flex items-center justify-center rounded-at-lg border border-at-hairline bg-at-canvas px-lg py-md font-haas text-at-button font-medium text-at-ink no-underline transition-all duration-base ease-soft will-change-transform hover:border-at-border-strong hover:shadow-at-card hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
           >
             Browse all games
           </Link>

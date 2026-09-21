@@ -55,7 +55,7 @@ export function GoogleSignInButton({ next = "/" }: { next?: string }) {
         type="button"
         onClick={signIn}
         disabled={loading}
-        className="flex h-[48px] w-full items-center justify-center gap-xs rounded-at-lg border border-at-hairline bg-at-canvas font-haas text-at-button font-medium text-at-ink transition-all hover:border-at-border-strong hover:shadow-at-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60"
+        className="flex h-[48px] w-full items-center justify-center gap-xs rounded-at-lg border border-at-hairline bg-at-canvas font-haas text-at-button font-medium text-at-ink transition-all duration-base ease-soft will-change-transform hover:border-at-border-strong hover:shadow-at-card hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60 disabled:translate-y-0"
       >
         <GoogleGlyph />
         {loading ? "Redirecting…" : "Continue with Google"}

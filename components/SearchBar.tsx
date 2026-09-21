@@ -97,14 +97,14 @@ export function SearchBar({ index }: { index: SearchItem[] }) {
           role="combobox"
           aria-expanded={showMenu}
           aria-autocomplete="list"
-          className="h-[40px] w-full rounded-at-sm border border-at-hairline bg-at-canvas pl-[36px] pr-[12px] font-haas text-at-body-md text-at-ink placeholder:text-at-muted focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
+          className="h-[40px] w-full rounded-at-sm border border-at-hairline bg-at-canvas pl-[36px] pr-[12px] font-haas text-at-body-md text-at-ink transition-all duration-base ease-soft placeholder:text-at-muted focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
         />
       </label>
 
       {showMenu && (
         <div
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-at-md border border-at-hairline bg-at-canvas py-[6px] shadow-at-card-hover"
+          className="motion-rise absolute left-0 right-0 top-[calc(100%+8px)] z-50 origin-top overflow-hidden rounded-at-md border border-at-hairline bg-at-canvas py-[6px] shadow-at-card-hover"
         >
           {results.length === 0 ? (
             <p className="px-md py-[10px] font-haas text-at-body-md text-at-muted">
@@ -119,7 +119,7 @@ export function SearchBar({ index }: { index: SearchItem[] }) {
                 aria-selected={i === active}
                 onMouseEnter={() => setActive(i)}
                 onClick={() => go(item)}
-                className={`flex w-full flex-col items-start px-md py-[8px] text-left transition-colors ${
+                className={`flex w-full flex-col items-start px-md py-[8px] text-left transition-colors duration-fast ease-soft ${
                   i === active ? "bg-at-surface-soft" : ""
                 }`}
               >

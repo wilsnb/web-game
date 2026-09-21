@@ -101,9 +101,9 @@ export function RatingButtons({
           aria-pressed={upActive}
           aria-label="Thumbs up"
           onClick={() => vote(1)}
-          className={`press-scale focus-ring flex h-[44px] w-[44px] items-center justify-center rounded-full border transition-colors disabled:opacity-60 ${
+          className={`press-scale focus-ring flex h-[44px] w-[44px] items-center justify-center rounded-full border transition-all duration-base ease-spring will-change-transform hover:scale-110 disabled:opacity-60 ${
             upActive
-              ? "border-primary-on-dark bg-primary-on-dark/15 text-primary-on-dark"
+              ? "border-primary-on-dark bg-primary-on-dark/15 text-primary-on-dark scale-110"
               : "border-white/20 text-body-on-dark hover:border-white/50"
           }`}
         >
@@ -115,9 +115,9 @@ export function RatingButtons({
           aria-pressed={downActive}
           aria-label="Thumbs down"
           onClick={() => vote(-1)}
-          className={`press-scale focus-ring flex h-[44px] w-[44px] items-center justify-center rounded-full border transition-colors disabled:opacity-60 ${
+          className={`press-scale focus-ring flex h-[44px] w-[44px] items-center justify-center rounded-full border transition-all duration-base ease-spring will-change-transform hover:scale-110 disabled:opacity-60 ${
             downActive
-              ? "border-primary-on-dark bg-primary-on-dark/15 text-primary-on-dark"
+              ? "border-primary-on-dark bg-primary-on-dark/15 text-primary-on-dark scale-110"
               : "border-white/20 text-body-on-dark hover:border-white/50"
           }`}
         >

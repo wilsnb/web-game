@@ -32,12 +32,12 @@ export function ProfileVisibilityToggle({
         aria-label="Make profile public"
         disabled={saving}
         onClick={toggle}
-        className={`relative h-[30px] w-[52px] rounded-pill transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link ${
+        className={`relative h-[30px] w-[52px] rounded-pill transition-colors duration-base ease-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link ${
           isPublic ? "bg-at-primary" : "bg-at-surface-strong"
         } disabled:opacity-60`}
       >
         <span
-          className={`absolute top-[3px] h-[24px] w-[24px] rounded-full bg-at-canvas transition-all ${
+          className={`absolute top-[3px] h-[24px] w-[24px] rounded-full bg-at-canvas shadow-at-card transition-all duration-base ease-spring ${
             isPublic ? "left-[25px]" : "left-[3px]"
           }`}
         />

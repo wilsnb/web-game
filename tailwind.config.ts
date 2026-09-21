@@ -157,6 +157,39 @@ const config: Config = {
         content: "980px",
         grid: "1440px",
       },
+
+      // --- Motion system ---
+      // Shared durations so every transition is coordinated (not ad-hoc).
+      transitionDuration: {
+        fast: "120ms",
+        base: "200ms",
+        slow: "320ms",
+      },
+      // Named easings: `soft` is the default smooth ease-out for most UI;
+      // `spring` adds a gentle overshoot for playful lifts (cards, toggles).
+      transitionTimingFunction: {
+        soft: "cubic-bezier(0.22, 0.61, 0.36, 1)",
+        spring: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      },
+      keyframes: {
+        "fade-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        "fade-in-up": {
+          from: { opacity: "0", transform: "translateY(6px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-in-scale": {
+          from: { opacity: "0", transform: "scale(0.97)" },
+          to: { opacity: "1", transform: "scale(1)" },
+        },
+      },
+      animation: {
+        "fade-in": "fade-in 200ms cubic-bezier(0.22, 0.61, 0.36, 1) both",
+        "fade-in-up": "fade-in-up 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both",
+        "fade-in-scale": "fade-in-scale 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both",
+      },
     },
   },
   plugins: [],

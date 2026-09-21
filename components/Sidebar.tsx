@@ -49,12 +49,12 @@ export function Sidebar({ quizzes }: { quizzes: QuizSummary[] }) {
         <button
           type="button"
           onClick={shuffle}
-          className="flex items-center gap-[6px] rounded-at-sm border border-at-hairline bg-at-canvas px-[10px] py-[6px] font-haas text-at-caption text-at-ink transition-all hover:border-at-border-strong hover:shadow-at-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
+          className="group flex items-center gap-[6px] rounded-at-sm border border-at-hairline bg-at-canvas px-[10px] py-[6px] font-haas text-at-caption text-at-ink transition-all duration-base ease-soft hover:border-at-border-strong hover:shadow-at-card hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
         >
           <svg
             aria-hidden
             viewBox="0 0 20 20"
-            className="h-[14px] w-[14px]"
+            className="h-[14px] w-[14px] transition-transform duration-slow ease-spring group-hover:rotate-180"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -71,7 +71,7 @@ export function Sidebar({ quizzes }: { quizzes: QuizSummary[] }) {
           type="checkbox"
           checked={unplayedOnly}
           onChange={(e) => setUnplayedOnly(e.target.checked)}
-          className="h-[16px] w-[16px] rounded-at-xs border-at-border-strong text-at-link focus:ring-at-link"
+          className="h-[16px] w-[16px] rounded-at-xs border-at-border-strong text-at-link transition-colors duration-fast ease-soft focus:ring-at-link"
         />
         Unplayed quizzes only
       </label>

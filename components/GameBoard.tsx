@@ -10,9 +10,15 @@ function GuessFeedback({ state }: { state: GameState }) {
   const last = state.lastGuess;
   if (!last || last.guess === "") return <div className="h-[52px]" />;
 
+  // Key on the guess count so the banner replays its fade on each new guess.
+  const key = state.history.length;
+
   if (last.correct) {
     return (
-      <div className="flex h-[52px] items-center justify-center rounded-md bg-pearl px-md text-body-apple text-ink">
+      <div
+        key={key}
+        className="motion-fade flex h-[52px] items-center justify-center rounded-md bg-pearl px-md text-body-apple text-ink"
+      >
         <span className="font-semibold text-primary">Correct!</span>
         <span className="ml-xs">
           {last.matchedAnswer} was #{last.matchedRank} · +{last.points} pts
@@ -23,14 +29,20 @@ function GuessFeedback({ state }: { state: GameState }) {
 
   if (last.alreadyClaimed) {
     return (
-      <div className="flex h-[52px] items-center justify-center rounded-md bg-pearl px-md text-body-apple text-ink-muted-80">
+      <div
+        key={key}
+        className="motion-fade flex h-[52px] items-center justify-center rounded-md bg-pearl px-md text-body-apple text-ink-muted-80"
+      >
         Already found — no points this time.
       </div>
     );
   }
 
   return (
-    <div className="flex h-[52px] items-center justify-center rounded-md bg-pearl px-md text-body-apple text-ink-muted-80">
+    <div
+      key={key}
+      className="motion-fade flex h-[52px] items-center justify-center rounded-md bg-pearl px-md text-body-apple text-ink-muted-80"
+    >
       Not on the list. No points.
     </div>
   );
@@ -114,7 +126,7 @@ export function GameBoard({
         aria-valuenow={state.totalFound}
       >
         <div
-          className="h-full rounded-pill bg-primary transition-all"
+          className="h-full rounded-pill bg-primary transition-all duration-slow ease-soft"
           style={{
             width: `${(state.totalFound / quiz.listLength) * 100}%`,
           }}
@@ -157,7 +169,7 @@ export function GameBoard({
           placeholder="Type your guess…"
           autoComplete="off"
           aria-label={`${currentTeam.name}'s guess`}
-          className="focus-ring h-[44px] flex-1 rounded-pill border border-black/[0.08] bg-canvas px-[20px] text-body-apple text-ink"
+          className="focus-ring h-[44px] flex-1 rounded-pill border border-black/[0.08] bg-canvas px-[20px] text-body-apple text-ink transition-all duration-base ease-soft focus:border-primary"
         />
         <PrimaryButton type="submit" className="h-[44px]">
           Submit
@@ -168,7 +180,7 @@ export function GameBoard({
         <button
           type="button"
           onClick={onSkip}
-          className="focus-ring press-scale text-caption text-primary"
+          className="focus-ring press-scale rounded-pill px-sm py-xxs text-caption text-primary transition-colors duration-fast ease-soft hover:text-primary-focus"
         >
           Pass / skip this guess
         </button>
@@ -187,9 +199,9 @@ export function GameBoard({
             return (
               <div
                 key={team.id}
-                className={`min-w-[110px] flex-1 rounded-lg border p-md text-center transition-colors ${
+                className={`min-w-[110px] flex-1 rounded-lg border p-md text-center transition-all duration-base ease-soft ${
                   isCurrent
-                    ? "border-primary bg-primary/5"
+                    ? "border-primary bg-primary/5 scale-[1.03] shadow-at-card"
                     : "border-divider-soft bg-canvas"
                 }`}
               >
@@ -230,7 +242,7 @@ export function GameBoard({
             {[...state.history].reverse().map((h) => (
               <li
                 key={h.id}
-                className="flex items-center justify-between gap-sm rounded-md border border-divider-soft bg-canvas px-md py-sm"
+                className="motion-rise flex items-center justify-between gap-sm rounded-md border border-divider-soft bg-canvas px-md py-sm"
               >
                 <span className="flex min-w-0 items-center gap-sm">
                   <span

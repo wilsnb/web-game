@@ -24,7 +24,7 @@ export function QuizCard({
   return (
     <Link
       href={`/play/${quiz.id}`}
-      className="group flex items-stretch gap-md rounded-at-md border border-at-hairline bg-at-surface-soft p-md no-underline shadow-at-card transition-all duration-150 hover:-translate-y-[2px] hover:border-at-border-strong hover:shadow-at-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
+      className="group flex items-stretch gap-md rounded-at-md border border-at-hairline bg-at-surface-soft p-md no-underline shadow-at-card transition-all duration-base ease-soft will-change-transform hover:-translate-y-[2px] hover:scale-[1.01] hover:border-at-border-strong hover:shadow-at-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
     >
       {/* Thumbnail — consistent aspect ratio, radius matches the card */}
       <div
@@ -35,7 +35,7 @@ export function QuizCard({
           alt=""
           fill
           sizes="120px"
-          className="object-cover"
+          className="object-cover transition-transform duration-slow ease-soft group-hover:scale-[1.06]"
         />
       </div>
 
@@ -50,7 +50,7 @@ export function QuizCard({
           </span>
         </div>
         <h3
-          className={`mt-[6px] font-haas ${titleType} font-medium text-at-link transition-colors group-hover:text-at-link-active`}
+          className={`mt-[6px] font-haas ${titleType} font-medium text-at-link transition-colors duration-fast ease-soft group-hover:text-at-link-active`}
         >
           {quiz.title}
         </h3>

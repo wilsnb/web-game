@@ -181,12 +181,12 @@ export function SetupForm({
             aria-checked={timerEnabled}
             aria-label="Toggle guess timer"
             onClick={() => setTimerEnabled((v) => !v)}
-            className={`focus-ring relative h-[30px] w-[52px] rounded-pill transition-colors ${
+            className={`focus-ring relative h-[30px] w-[52px] rounded-pill transition-colors duration-base ease-soft ${
               timerEnabled ? "bg-primary" : "bg-hairline"
             }`}
           >
             <span
-              className={`absolute top-[3px] h-[24px] w-[24px] rounded-full bg-white transition-all ${
+              className={`absolute top-[3px] h-[24px] w-[24px] rounded-full bg-white shadow-at-card transition-all duration-base ease-spring ${
                 timerEnabled ? "left-[25px]" : "left-[3px]"
               }`}
             />

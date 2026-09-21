@@ -47,12 +47,12 @@ export function DeleteAccountSection() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="mt-md inline-flex items-center justify-center rounded-at-lg border border-at-coral px-lg py-md font-haas text-at-button font-medium text-at-coral transition-colors hover:bg-at-coral hover:text-at-on-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-coral"
+          className="mt-md inline-flex items-center justify-center rounded-at-lg border border-at-coral px-lg py-md font-haas text-at-button font-medium text-at-coral transition-all duration-base ease-soft hover:bg-at-coral hover:text-at-on-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-coral"
         >
           Delete account
         </button>
       ) : (
-        <div className="mt-md flex flex-col gap-sm">
+        <div className="motion-rise mt-md flex flex-col gap-sm">
           <label className="font-haas text-at-body-md text-at-ink">
             Type <span className="font-semibold">{CONFIRM_WORD}</span> to
             confirm
@@ -61,12 +61,12 @@ export function DeleteAccountSection() {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               autoComplete="off"
-              className="mt-xxs h-[44px] w-full max-w-[240px] rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink focus:border-at-coral focus:outline-none focus:ring-2 focus:ring-at-coral/30"
+              className="mt-xxs h-[44px] w-full max-w-[240px] rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink transition-all duration-base ease-soft focus:border-at-coral focus:outline-none focus:ring-2 focus:ring-at-coral/30"
             />
           </label>
 
           {error && (
-            <p className="font-haas text-at-body-md text-at-coral" role="alert">
+            <p className="motion-fade font-haas text-at-body-md text-at-coral" role="alert">
               {error}
             </p>
           )}
@@ -76,7 +76,7 @@ export function DeleteAccountSection() {
               type="button"
               disabled={!canDelete || busy}
               onClick={deleteAccount}
-              className="inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-coral px-lg font-haas text-at-button font-medium text-at-on-dark transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-coral disabled:opacity-50"
+              className="inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-coral px-lg font-haas text-at-button font-medium text-at-on-dark transition-all duration-base ease-soft will-change-transform hover:opacity-90 hover:-translate-y-[1px] hover:shadow-at-card-hover active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-coral disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none"
             >
               {busy ? "Deleting…" : "Permanently delete my account"}
             </button>
@@ -88,7 +88,7 @@ export function DeleteAccountSection() {
                 setConfirm("");
                 setError(null);
               }}
-              className="inline-flex h-[44px] items-center justify-center rounded-at-lg border border-at-hairline bg-at-canvas px-lg font-haas text-at-button font-medium text-at-ink transition-colors hover:border-at-border-strong disabled:opacity-50"
+              className="inline-flex h-[44px] items-center justify-center rounded-at-lg border border-at-hairline bg-at-canvas px-lg font-haas text-at-button font-medium text-at-ink transition-all duration-base ease-soft hover:border-at-border-strong hover:shadow-at-card disabled:opacity-50"
             >
               Cancel
             </button>

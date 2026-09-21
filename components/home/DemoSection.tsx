@@ -27,7 +27,7 @@ export function DemoSection({ playHref }: { playHref: string | null }) {
           {playHref ? (
             <Link
               href={playHref}
-              className="mt-lg inline-flex items-center justify-center rounded-at-lg bg-at-canvas px-lg py-md font-haas text-at-button font-medium text-at-ink no-underline transition-transform hover:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-info-border"
+              className="mt-lg inline-flex items-center justify-center rounded-at-lg bg-at-canvas px-lg py-md font-haas text-at-button font-medium text-at-ink no-underline transition-transform duration-base ease-soft hover:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-info-border"
             >
               Play a ranked quiz
             </Link>

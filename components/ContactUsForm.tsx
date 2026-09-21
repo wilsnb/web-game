@@ -124,7 +124,7 @@ export function ContactUsForm({
       <button
         type="submit"
         disabled={status === "sending"}
-        className="inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-colors hover:bg-at-primary-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60"
+        className="inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-all duration-base ease-soft will-change-transform hover:bg-at-primary-active hover:-translate-y-[1px] hover:shadow-at-card-hover active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60 disabled:translate-y-0 disabled:shadow-none"
       >
         {status === "sending" ? "Sending…" : "Send Message"}
       </button>

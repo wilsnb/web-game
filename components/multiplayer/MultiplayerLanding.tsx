@@ -106,7 +106,7 @@ export function MultiplayerLanding({
               <select
                 value={quizId}
                 onChange={(e) => setQuizId(e.target.value)}
-                className="mt-xxs h-[44px] w-full rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
+                className="mt-xxs h-[44px] w-full rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink transition-all duration-base ease-soft focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
               >
                 {quizzes.map((q) => (
                   <option key={q.id} value={q.id}>
@@ -125,7 +125,7 @@ export function MultiplayerLanding({
                   max={10}
                   value={rounds}
                   onChange={(e) => setRounds(Number(e.target.value))}
-                  className="mt-xxs h-[44px] w-full rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
+                  className="mt-xxs h-[44px] w-full rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink transition-all duration-base ease-soft focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
                 />
               </label>
               <label className="flex-1 font-haas text-at-body-md text-at-ink">
@@ -136,7 +136,7 @@ export function MultiplayerLanding({
                   max={10}
                   value={guessesPerRound}
                   onChange={(e) => setGuessesPerRound(Number(e.target.value))}
-                  className="mt-xxs h-[44px] w-full rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
+                  className="mt-xxs h-[44px] w-full rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink transition-all duration-base ease-soft focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
                 />
               </label>
             </div>
@@ -146,7 +146,7 @@ export function MultiplayerLanding({
               <select
                 value={turnSeconds}
                 onChange={(e) => setTurnSeconds(Number(e.target.value))}
-                className="mt-xxs h-[44px] w-full rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
+                className="mt-xxs h-[44px] w-full rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink transition-all duration-base ease-soft focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
               >
                 <option value={15}>15 seconds per turn</option>
                 <option value={20}>20 seconds per turn</option>
@@ -164,7 +164,7 @@ export function MultiplayerLanding({
           type="button"
           disabled={busy}
           onClick={createRoom}
-          className="mt-md inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-colors hover:bg-at-primary-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60"
+          className="mt-md inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-all duration-base ease-soft will-change-transform hover:bg-at-primary-active hover:-translate-y-[1px] hover:shadow-at-card-hover active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60 disabled:translate-y-0 disabled:shadow-none"
         >
           {isSignedIn ? "Create room" : "Sign in to host"}
         </button>
@@ -185,7 +185,7 @@ export function MultiplayerLanding({
                 onChange={(e) => setGuestName(e.target.value)}
                 maxLength={24}
                 placeholder="e.g. Alex"
-                className="mt-xxs h-[44px] w-full rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
+                className="mt-xxs h-[44px] w-full rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink transition-all duration-base ease-soft focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
               />
             </label>
           )}
@@ -197,14 +197,14 @@ export function MultiplayerLanding({
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               maxLength={4}
               placeholder="X7K2"
-              className="mt-xxs h-[44px] w-full max-w-[160px] rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-title-md uppercase tracking-widest text-at-ink focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
+              className="mt-xxs h-[44px] w-full max-w-[160px] rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-title-md uppercase tracking-widest text-at-ink transition-all duration-base ease-soft focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
             />
           </label>
           <button
             type="button"
             disabled={busy}
             onClick={joinRoom}
-            className="inline-flex h-[44px] w-fit items-center justify-center rounded-at-lg border border-at-hairline bg-at-canvas px-lg font-haas text-at-button font-medium text-at-ink transition-all hover:border-at-border-strong hover:shadow-at-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60"
+            className="inline-flex h-[44px] w-fit items-center justify-center rounded-at-lg border border-at-hairline bg-at-canvas px-lg font-haas text-at-button font-medium text-at-ink transition-all duration-base ease-soft will-change-transform hover:border-at-border-strong hover:shadow-at-card hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60 disabled:translate-y-0"
           >
             Join room
           </button>
@@ -212,7 +212,7 @@ export function MultiplayerLanding({
       </div>
 
       {error && (
-        <p className="font-haas text-at-body-md text-at-coral" role="alert">
+        <p className="motion-fade font-haas text-at-body-md text-at-coral" role="alert">
           {error}
         </p>
       )}

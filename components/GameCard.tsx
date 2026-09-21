@@ -55,7 +55,7 @@ export function GameCard({
   // glow. Playable (link) cards react a touch more strongly; coming-soon cards
   // lift subtly to acknowledge the hover without implying they're clickable.
   const baseClass =
-    "rounded-at-md border border-at-hairline bg-at-surface-soft shadow-at-card transition-all duration-200 ease-out will-change-transform";
+    "rounded-at-md border border-at-hairline bg-at-surface-soft shadow-at-card transition-all duration-base ease-soft will-change-transform";
   const linkClass =
     "no-underline hover:-translate-y-[4px] hover:scale-[1.03] hover:border-at-border-strong hover:shadow-at-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link";
   const staticHoverClass = soon

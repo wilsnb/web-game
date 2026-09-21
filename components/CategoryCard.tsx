@@ -18,7 +18,7 @@ export function CategoryCard({ quiz }: { quiz: QuizSummary }) {
   return (
     <Link
       href={`/play/${quiz.id}`}
-      className="focus-ring press-scale group flex flex-col justify-between rounded-lg border border-hairline bg-canvas p-lg no-underline"
+      className="focus-ring press-scale group flex flex-col justify-between rounded-lg border border-hairline bg-canvas p-lg no-underline transition-all duration-base ease-soft will-change-transform hover:-translate-y-[2px] hover:border-at-border-strong hover:shadow-at-card-hover"
     >
       <div className="flex flex-col gap-sm">
         <CategoryTag category={quiz.category} />
@@ -28,7 +28,12 @@ export function CategoryCard({ quiz }: { quiz: QuizSummary }) {
         <span className="text-caption text-ink-muted-48">
           Top {quiz.listLength}
         </span>
-        <span className="text-body-apple text-primary">Play →</span>
+        <span className="text-body-apple text-primary">
+          Play{" "}
+          <span className="inline-block transition-transform duration-base ease-soft group-hover:translate-x-[3px]">
+            →
+          </span>
+        </span>
       </div>
     </Link>
   );

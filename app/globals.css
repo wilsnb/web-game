@@ -34,12 +34,58 @@ body {
   box-sizing: border-box;
 }
 
-/* System-wide press micro-interaction (design doc: transform scale 0.95). */
+/* System-wide press micro-interaction (design doc: transform scale 0.95).
+   Soft easing so the press settles rather than snapping. */
 .press-scale {
-  transition: transform 0.12s ease;
+  transition: transform 0.14s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .press-scale:active {
   transform: scale(0.95);
+}
+
+/*
+ * Motion helpers — reusable entrance animations for content that mounts
+ * conditionally (errors, banners, results, list rows) so it fades in smoothly
+ * instead of hard-popping. Pair `.motion-rise` with an inline animation-delay
+ * for gentle staggered lists.
+ */
+.motion-fade {
+  animation: fade-in 200ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.motion-rise {
+  animation: fade-in-up 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.motion-pop {
+  animation: fade-in-scale 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Keyboard focus ring rooted in Focus Blue. */
@@ -149,5 +195,25 @@ body {
   .ambient-bg::before,
   .ambient-bg::after {
     animation: none;
+  }
+
+  /*
+   * Respect the OS "reduce motion" setting site-wide: near-instant transitions
+   * and no entrance animations or transforms. Keeps color/opacity changes
+   * perceptible but removes movement.
+   */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .motion-fade,
+  .motion-rise,
+  .motion-pop {
+    animation: none !important;
   }
 }

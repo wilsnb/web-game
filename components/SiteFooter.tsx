@@ -60,7 +60,7 @@ export function SiteFooter() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="font-haas text-at-body-md text-at-link no-underline hover:text-at-link-active"
+                      className="inline-block font-haas text-at-body-md text-at-link no-underline transition-all duration-fast ease-soft hover:text-at-link-active hover:translate-x-[2px]"
                     >
                       {link.label}
                     </Link>

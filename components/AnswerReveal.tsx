@@ -35,7 +35,7 @@ export function AnswerReveal({
 
       <div className="relative">
         <ol
-          className={`flex flex-col transition-all ${
+          className={`flex flex-col transition-all duration-slow ease-soft ${
             showClear ? "" : "pointer-events-none select-none blur-md"
           }`}
           aria-hidden={!showClear}
@@ -66,12 +66,12 @@ export function AnswerReveal({
 
         {/* Overlay: shown until the answers are revealed. */}
         {!showClear && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-sm text-center">
+          <div className="motion-fade absolute inset-0 flex flex-col items-center justify-center gap-sm text-center">
             {isSignedIn ? (
               <button
                 type="button"
                 onClick={() => setRevealed(true)}
-                className="press-scale focus-ring inline-flex items-center justify-center rounded-pill bg-primary px-[22px] py-[11px] text-body-apple text-white"
+                className="press-scale focus-ring inline-flex items-center justify-center rounded-pill bg-primary px-[22px] py-[11px] text-body-apple text-white transition-all duration-base ease-soft will-change-transform hover:-translate-y-[1px] hover:bg-primary-focus hover:shadow-at-card-hover active:translate-y-0"
               >
                 View answers
               </button>
@@ -82,7 +82,7 @@ export function AnswerReveal({
                 </p>
                 <Link
                   href={`/login?next=${encodeURIComponent(loginNext)}`}
-                  className="press-scale focus-ring inline-flex items-center justify-center rounded-pill bg-primary px-[22px] py-[11px] text-body-apple text-white no-underline"
+                  className="press-scale focus-ring inline-flex items-center justify-center rounded-pill bg-primary px-[22px] py-[11px] text-body-apple text-white no-underline transition-all duration-base ease-soft will-change-transform hover:-translate-y-[1px] hover:bg-primary-focus hover:shadow-at-card-hover active:translate-y-0"
                 >
                   Log in to view answers
                 </Link>

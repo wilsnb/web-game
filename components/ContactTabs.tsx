@@ -39,7 +39,7 @@ export function ContactTabs({
               aria-selected={active}
               type="button"
               onClick={() => setTab(t.key)}
-              className={`flex-1 rounded-at-sm px-md py-sm font-haas text-at-body-md font-medium transition-colors ${
+              className={`flex-1 rounded-at-sm px-md py-sm font-haas text-at-body-md font-medium transition-all duration-base ease-soft ${
                 active
                   ? "bg-at-canvas text-at-ink shadow-at-card"
                   : "text-at-muted hover:text-at-ink"

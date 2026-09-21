@@ -60,11 +60,11 @@ export function ResultsScreen({
 
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center bg-tile-1 px-lg py-section text-body-on-dark">
-      <div className="w-full max-w-content text-center">
+      <div className="motion-rise w-full max-w-content text-center">
         <p className="text-caption text-body-muted">
           {quiz.title} · {state.totalFound} of {quiz.listLength} found
         </p>
-        <h1 className="mt-sm text-display-lg font-semibold tracking-tight text-body-on-dark">
+        <h1 className="motion-pop mt-sm text-display-lg font-semibold tracking-tight text-body-on-dark">
           {isTie ? "It's a tie!" : `${winnerLabel} wins`}
         </h1>
         {!isTie && (
@@ -80,7 +80,8 @@ export function ResultsScreen({
             return (
               <li
                 key={team.id}
-                className="flex items-center justify-between border-b border-white/10 py-md last:border-b-0"
+                className="motion-rise flex items-center justify-between border-b border-white/10 py-md last:border-b-0"
+                style={{ animationDelay: `${120 + i * 70}ms` }}
               >
                 <span className="flex items-center gap-sm">
                   <span className="w-[24px] text-caption tabular-nums text-body-muted">

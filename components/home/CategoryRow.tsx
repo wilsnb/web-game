@@ -52,7 +52,7 @@ export function CategoryRow({ category }: { category: CatalogCategory }) {
         <div className="flex flex-none items-center gap-xs">
           <Link
             href={`/category/${slug}`}
-            className="font-haas text-at-body-md text-at-link no-underline hover:text-at-link-active"
+            className="font-haas text-at-body-md text-at-link no-underline transition-colors duration-fast ease-soft hover:text-at-link-active"
           >
             View all →
           </Link>
@@ -62,7 +62,7 @@ export function CategoryRow({ category }: { category: CatalogCategory }) {
               type="button"
               aria-label={`Scroll ${category.label} left`}
               onClick={() => scrollBy(-1)}
-              className="flex h-[32px] w-[32px] items-center justify-center rounded-full border border-at-hairline bg-at-canvas text-at-ink transition-colors hover:border-at-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
+              className="flex h-[32px] w-[32px] items-center justify-center rounded-full border border-at-hairline bg-at-canvas text-at-ink transition-all duration-base ease-soft hover:border-at-border-strong hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
             >
               <Chevron dir="left" />
             </button>
@@ -70,7 +70,7 @@ export function CategoryRow({ category }: { category: CatalogCategory }) {
               type="button"
               aria-label={`Scroll ${category.label} right`}
               onClick={() => scrollBy(1)}
-              className="flex h-[32px] w-[32px] items-center justify-center rounded-full border border-at-hairline bg-at-canvas text-at-ink transition-colors hover:border-at-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
+              className="flex h-[32px] w-[32px] items-center justify-center rounded-full border border-at-hairline bg-at-canvas text-at-ink transition-all duration-base ease-soft hover:border-at-border-strong hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
             >
               <Chevron dir="right" />
             </button>
@@ -96,7 +96,7 @@ export function CategoryRow({ category }: { category: CatalogCategory }) {
           <li className="flex w-[180px] flex-none snap-start items-center justify-center">
             <Link
               href={`/category/${slug}`}
-              className="flex h-full w-full items-center justify-center rounded-at-md border border-dashed border-at-hairline bg-at-surface-soft/60 px-md py-lg text-center font-haas text-at-body-md font-medium text-at-link no-underline transition-colors hover:border-at-border-strong hover:text-at-link-active"
+              className="flex h-full w-full items-center justify-center rounded-at-md border border-dashed border-at-hairline bg-at-surface-soft/60 px-md py-lg text-center font-haas text-at-body-md font-medium text-at-link no-underline transition-all duration-base ease-soft hover:border-at-border-strong hover:text-at-link-active hover:-translate-y-[2px]"
             >
               View all
               <br />

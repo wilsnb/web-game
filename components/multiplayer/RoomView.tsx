@@ -92,12 +92,12 @@ export function RoomView({
                   type="button"
                   disabled={busy}
                   onClick={start}
-                  className="mt-md inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-colors hover:bg-at-primary-active disabled:opacity-60"
+                  className="mt-md inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-all duration-base ease-soft will-change-transform hover:bg-at-primary-active hover:-translate-y-[1px] hover:shadow-at-card-hover active:translate-y-0 disabled:opacity-60 disabled:translate-y-0 disabled:shadow-none"
                 >
                   {busy ? "Starting…" : "Start game"}
                 </button>
                 {error && (
-                  <p className="mt-sm font-haas text-at-body-md text-at-coral">
+                  <p className="motion-fade mt-sm font-haas text-at-body-md text-at-coral">
                     {error}
                   </p>
                 )}
@@ -178,9 +178,9 @@ function Scoreboard({
         return (
           <div
             key={s.playerId}
-            className={`min-w-[110px] flex-1 rounded-at-md border p-md text-center ${
+            className={`min-w-[110px] flex-1 rounded-at-md border p-md text-center transition-all duration-base ease-soft ${
               isCurrent
-                ? "border-at-primary bg-at-primary/5"
+                ? "border-at-primary bg-at-primary/5 scale-[1.03] shadow-at-card"
                 : "border-at-hairline bg-at-canvas"
             }`}
           >
@@ -320,7 +320,7 @@ function PlayingView({
           Time left
         </span>
         <span
-          className={`font-haas text-at-title-md tabular-nums ${
+          className={`font-haas text-at-title-md tabular-nums transition-colors duration-base ease-soft ${
             lowTime ? "text-at-coral" : "text-at-ink"
           }`}
           role="timer"
@@ -331,7 +331,10 @@ function PlayingView({
       </div>
 
       {/* Turn / input */}
-      <div className="rounded-at-md border border-at-hairline bg-at-canvas p-lg text-center shadow-at-card">
+      <div
+        key={currentId}
+        className="motion-fade rounded-at-md border border-at-hairline bg-at-canvas p-lg text-center shadow-at-card"
+      >
         {myTurn ? (
           <>
             <p className="font-haas text-at-body-md font-medium text-at-primary">
@@ -350,12 +353,12 @@ function PlayingView({
                 onChange={(e) => setGuess(e.target.value)}
                 autoFocus
                 placeholder="Type your guess…"
-                className="h-[44px] flex-1 rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
+                className="h-[44px] flex-1 rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink transition-all duration-base ease-soft focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
               />
               <button
                 type="submit"
                 disabled={busy || !guess.trim()}
-                className="h-[44px] rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark disabled:opacity-60"
+                className="h-[44px] rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-all duration-base ease-soft will-change-transform hover:bg-at-primary-active hover:-translate-y-[1px] hover:shadow-at-card-hover active:translate-y-0 disabled:opacity-60 disabled:translate-y-0 disabled:shadow-none"
               >
                 Guess
               </button>
@@ -364,7 +367,7 @@ function PlayingView({
               type="button"
               disabled={busy}
               onClick={() => send("skip")}
-              className="mt-sm font-haas text-at-caption text-at-link hover:text-at-link-active"
+              className="mt-sm font-haas text-at-caption text-at-link transition-colors duration-fast ease-soft hover:text-at-link-active"
             >
               Pass / skip
             </button>
@@ -381,7 +384,7 @@ function PlayingView({
                 type="button"
                 disabled={busy}
                 onClick={hostSkip}
-                className="mt-md inline-flex h-[40px] items-center justify-center rounded-at-lg border border-at-hairline bg-at-canvas px-md font-haas text-at-caption font-medium text-at-ink transition-all hover:border-at-coral hover:text-at-coral disabled:opacity-60"
+                className="mt-md inline-flex h-[40px] items-center justify-center rounded-at-lg border border-at-hairline bg-at-canvas px-md font-haas text-at-caption font-medium text-at-ink transition-all duration-base ease-soft hover:border-at-coral hover:text-at-coral hover:shadow-at-card disabled:opacity-60"
               >
                 Skip {current?.name ?? "player"}
               </button>
@@ -389,7 +392,7 @@ function PlayingView({
           </>
         )}
         {error && (
-          <p className="mt-sm font-haas text-at-body-md text-at-coral">{error}</p>
+          <p className="motion-fade mt-sm font-haas text-at-body-md text-at-coral">{error}</p>
         )}
       </div>
 
@@ -415,7 +418,7 @@ function PlayingView({
             {[...game.history].reverse().map((h) => (
               <li
                 key={h.id}
-                className="flex items-center justify-between gap-sm rounded-at-md border border-at-hairline bg-at-canvas px-md py-sm font-haas text-at-body-md"
+                className="motion-rise flex items-center justify-between gap-sm rounded-at-md border border-at-hairline bg-at-canvas px-md py-sm font-haas text-at-body-md"
               >
                 <span className="flex min-w-0 items-center gap-sm">
                   <span className="w-[80px] flex-none truncate text-at-caption font-medium text-at-muted">
@@ -464,11 +467,11 @@ function FinishedView({
   const isTie = winners.length > 1;
 
   return (
-    <div className="rounded-at-md border border-at-hairline bg-at-canvas p-lg text-center shadow-at-card">
+    <div className="motion-rise rounded-at-md border border-at-hairline bg-at-canvas p-lg text-center shadow-at-card">
       <p className="font-haas text-at-caption uppercase tracking-wide text-at-muted">
         Final results
       </p>
-      <h2 className="mt-xs font-haas text-at-display-md font-normal text-at-ink">
+      <h2 className="motion-pop mt-xs font-haas text-at-display-md font-normal text-at-ink">
         {isTie
           ? "It's a tie!"
           : `${winners[0]?.name ?? "Someone"} wins`}
@@ -478,7 +481,8 @@ function FinishedView({
         {sorted.map((s, i) => (
           <li
             key={s.playerId}
-            className="flex items-center justify-between border-b border-at-hairline py-sm font-haas text-at-body-md text-at-ink last:border-b-0"
+            className="motion-rise flex items-center justify-between border-b border-at-hairline py-sm font-haas text-at-body-md text-at-ink last:border-b-0"
+            style={{ animationDelay: `${120 + i * 70}ms` }}
           >
             <span>
               {i + 1}. {s.name}

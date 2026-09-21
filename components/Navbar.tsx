@@ -71,7 +71,7 @@ export function Navbar({
         <button
           type="button"
           onClick={goRandom}
-          className="font-haas text-at-body-md text-at-link transition-colors hover:text-at-link-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px]"
+          className="font-haas text-at-body-md text-at-link transition-colors duration-fast ease-soft hover:text-at-link-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px]"
         >
           Random
         </button>
@@ -79,7 +79,7 @@ export function Navbar({
         {/* Leaderboard */}
         <Link
           href="/leaderboard"
-          className="hidden font-haas text-at-body-md text-at-link no-underline transition-colors hover:text-at-link-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px] sm:inline-flex"
+          className="hidden font-haas text-at-body-md text-at-link no-underline transition-colors duration-fast ease-soft hover:text-at-link-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px] sm:inline-flex"
         >
           Leaderboard
         </Link>
@@ -87,7 +87,7 @@ export function Navbar({
         {/* Multiplayer (beta) */}
         <Link
           href="/multiplayer"
-          className="hidden font-haas text-at-body-md text-at-link no-underline transition-colors hover:text-at-link-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px] sm:inline-flex"
+          className="hidden font-haas text-at-body-md text-at-link no-underline transition-colors duration-fast ease-soft hover:text-at-link-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px] sm:inline-flex"
         >
           Multiplayer
         </Link>
@@ -100,7 +100,7 @@ export function Navbar({
         {/* Go Premium (subscription) */}
         <Link
           href="/subscribe"
-          className="font-haas text-at-body-md font-medium text-at-coral no-underline transition-colors hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px] md:ml-md"
+          className="font-haas text-at-body-md font-medium text-at-coral no-underline transition-all duration-fast ease-soft hover:opacity-80 hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px] md:ml-md"
         >
           Go Premium
         </Link>
@@ -153,7 +153,7 @@ function LoggedOutButtons() {
         type="button"
         disabled={busy}
         onClick={go}
-        className="rounded-at-lg border border-at-hairline bg-at-canvas px-md py-[8px] font-haas text-at-body-md font-medium text-at-ink transition-all hover:border-at-border-strong hover:shadow-at-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60"
+        className="rounded-at-lg border border-at-hairline bg-at-canvas px-md py-[8px] font-haas text-at-body-md font-medium text-at-ink transition-all duration-base ease-soft hover:border-at-border-strong hover:shadow-at-card hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60"
       >
         Log in
       </button>
@@ -161,7 +161,7 @@ function LoggedOutButtons() {
         type="button"
         disabled={busy}
         onClick={go}
-        className="rounded-at-lg bg-at-primary px-md py-[8px] font-haas text-at-body-md font-medium text-at-on-dark transition-colors hover:bg-at-primary-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60"
+        className="rounded-at-lg bg-at-primary px-md py-[8px] font-haas text-at-body-md font-medium text-at-on-dark transition-all duration-base ease-soft hover:bg-at-primary-active hover:shadow-at-card-hover hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60"
       >
         {busy ? "…" : "Create account"}
       </button>
@@ -222,7 +222,7 @@ function AccountMenu({ user }: { user: NavUser }) {
         aria-controls={open ? menuId : undefined}
         aria-label="Account menu"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-[40px] w-[40px] items-center justify-center overflow-hidden rounded-full border border-at-hairline bg-at-canvas text-at-ink transition-shadow hover:shadow-at-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
+        className="flex h-[40px] w-[40px] items-center justify-center overflow-hidden rounded-full border border-at-hairline bg-at-canvas text-at-ink transition-all duration-base ease-soft hover:shadow-at-card hover:scale-[1.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
       >
         {user.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -246,7 +246,7 @@ function AccountMenu({ user }: { user: NavUser }) {
           id={menuId}
           role="menu"
           aria-label="Account"
-          className="absolute right-0 top-[calc(100%+8px)] z-50 w-[260px] overflow-hidden rounded-at-md border border-at-hairline bg-at-canvas py-[6px] shadow-at-card-hover"
+          className="motion-rise absolute right-0 top-[calc(100%+8px)] z-50 w-[260px] origin-top-right overflow-hidden rounded-at-md border border-at-hairline bg-at-canvas py-[6px] shadow-at-card-hover"
         >
           <div className="border-b border-at-hairline px-md py-sm">
             <div className="font-haas text-at-body-md font-medium text-at-ink">
@@ -262,7 +262,7 @@ function AccountMenu({ user }: { user: NavUser }) {
             href="/account"
             role="menuitem"
             onClick={() => close()}
-            className="flex items-center px-md py-[10px] font-haas text-at-body-md text-at-ink no-underline outline-none transition-colors hover:bg-at-surface-soft focus:bg-at-surface-soft"
+            className="flex items-center px-md py-[10px] font-haas text-at-body-md text-at-ink no-underline outline-none transition-colors duration-fast ease-soft hover:bg-at-surface-soft focus:bg-at-surface-soft"
           >
             Your account
           </Link>
@@ -270,7 +270,7 @@ function AccountMenu({ user }: { user: NavUser }) {
             href="/account/stats"
             role="menuitem"
             onClick={() => close()}
-            className="flex items-center px-md py-[10px] font-haas text-at-body-md text-at-ink no-underline outline-none transition-colors hover:bg-at-surface-soft focus:bg-at-surface-soft"
+            className="flex items-center px-md py-[10px] font-haas text-at-body-md text-at-ink no-underline outline-none transition-colors duration-fast ease-soft hover:bg-at-surface-soft focus:bg-at-surface-soft"
           >
             Your stats
           </Link>
@@ -279,7 +279,7 @@ function AccountMenu({ user }: { user: NavUser }) {
             role="menuitem"
             disabled={busy}
             onClick={signOut}
-            className="flex w-full items-center border-t border-at-hairline px-md py-[10px] text-left font-haas text-at-body-md text-at-ink outline-none transition-colors hover:bg-at-surface-soft focus:bg-at-surface-soft disabled:opacity-60"
+            className="flex w-full items-center border-t border-at-hairline px-md py-[10px] text-left font-haas text-at-body-md text-at-ink outline-none transition-colors duration-fast ease-soft hover:bg-at-surface-soft focus:bg-at-surface-soft disabled:opacity-60"
           >
             {busy ? "Logging out…" : "Log out"}
           </button>
@@ -393,13 +393,13 @@ function CategoriesDropdown({ categories }: { categories: NavCategory[] }) {
         aria-controls={open ? menuId : undefined}
         onClick={() => (open ? close() : openMenu(-1))}
         onKeyDown={onButtonKeyDown}
-        className="flex items-center gap-[4px] rounded-at-sm px-[6px] py-[6px] font-haas text-at-body-md text-at-ink transition-colors hover:text-at-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
+        className="flex items-center gap-[4px] rounded-at-sm px-[6px] py-[6px] font-haas text-at-body-md text-at-ink transition-colors duration-fast ease-soft hover:text-at-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
       >
         Menu
         <svg
           aria-hidden
           viewBox="0 0 16 16"
-          className={`h-[14px] w-[14px] transition-transform ${
+          className={`h-[14px] w-[14px] transition-transform duration-base ease-soft ${
             open ? "rotate-180" : ""
           }`}
           fill="none"
@@ -415,7 +415,7 @@ function CategoriesDropdown({ categories }: { categories: NavCategory[] }) {
           id={menuId}
           role="menu"
           aria-label="Game categories"
-          className="absolute left-0 top-[calc(100%+8px)] z-50 w-[260px] overflow-hidden rounded-at-md border border-at-hairline bg-at-canvas py-[6px] shadow-at-card-hover"
+          className="motion-rise absolute left-0 top-[calc(100%+8px)] z-50 w-[260px] origin-top-left overflow-hidden rounded-at-md border border-at-hairline bg-at-canvas py-[6px] shadow-at-card-hover"
         >
           {items.map((item, i) => (
             <Link
@@ -428,7 +428,7 @@ function CategoriesDropdown({ categories }: { categories: NavCategory[] }) {
               tabIndex={activeIndex === i ? 0 : -1}
               onKeyDown={onItemKeyDown}
               onClick={() => close()}
-              className={`flex items-center justify-between px-md py-[10px] font-haas text-at-body-md no-underline outline-none transition-colors hover:bg-at-surface-soft hover:text-at-link focus:bg-at-surface-soft focus:text-at-link ${
+              className={`flex items-center justify-between px-md py-[10px] font-haas text-at-body-md no-underline outline-none transition-colors duration-fast ease-soft hover:bg-at-surface-soft hover:text-at-link focus:bg-at-surface-soft focus:text-at-link ${
                 item.key === "all"
                   ? "border-b border-at-hairline font-medium text-at-ink"
                   : "text-at-body"

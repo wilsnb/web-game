@@ -101,7 +101,7 @@ export function UsernamePicker({ next = "/" }: { next?: string }) {
       <button
         type="submit"
         disabled={status !== "available" || saving}
-        className="inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-colors hover:bg-at-primary-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-50"
+        className="inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-all duration-base ease-soft will-change-transform hover:bg-at-primary-active hover:-translate-y-[1px] hover:shadow-at-card-hover active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none"
       >
         {saving ? "Saving…" : "Continue"}
       </button>

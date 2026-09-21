@@ -57,13 +57,13 @@ function FaqItem({ item }: { item: QA }) {
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen((v) => !v)}
-          className="flex w-full items-center justify-between gap-md px-md py-md text-left font-haas text-at-title-sm font-medium text-at-ink transition-colors hover:bg-at-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
+          className="flex w-full items-center justify-between gap-md px-md py-md text-left font-haas text-at-title-sm font-medium text-at-ink transition-colors duration-fast ease-soft hover:bg-at-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
         >
           <span>{item.q}</span>
           <svg
             aria-hidden
             viewBox="0 0 16 16"
-            className={`h-[16px] w-[16px] flex-none text-at-muted transition-transform ${
+            className={`h-[16px] w-[16px] flex-none text-at-muted transition-transform duration-base ease-soft ${
               open ? "rotate-180" : ""
             }`}
             fill="none"
@@ -79,7 +79,7 @@ function FaqItem({ item }: { item: QA }) {
           id={panelId}
           role="region"
           aria-labelledby={buttonId}
-          className="border-t border-at-hairline px-md py-md font-haas text-at-body-md leading-relaxed text-at-body"
+          className="motion-rise border-t border-at-hairline px-md py-md font-haas text-at-body-md leading-relaxed text-at-body"
         >
           {item.a}
         </div>

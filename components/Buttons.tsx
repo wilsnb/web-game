@@ -9,7 +9,14 @@ import type { ComponentProps, ReactNode } from "react";
  */
 
 const base =
-  "press-scale focus-ring inline-flex items-center justify-center rounded-pill text-body-apple font-normal disabled:cursor-not-allowed disabled:bg-divider-soft disabled:text-ink-muted-48";
+  "press-scale focus-ring inline-flex items-center justify-center rounded-pill text-body-apple font-normal transition-all duration-base ease-soft will-change-transform hover:-translate-y-[1px] active:translate-y-0 disabled:cursor-not-allowed disabled:translate-y-0 disabled:bg-divider-soft disabled:text-ink-muted-48 disabled:shadow-none";
+
+// Per-variant hover feedback. Primary lifts + darkens + gains a soft shadow;
+// secondary fills with a faint tint. Both draw motion from `base`.
+const primaryVariant =
+  "bg-primary px-[22px] py-[11px] text-white hover:bg-primary-focus hover:shadow-at-card-hover";
+const secondaryVariant =
+  "border border-primary bg-transparent px-[22px] py-[11px] text-primary hover:bg-primary/[0.06] hover:shadow-at-card";
 
 export function PrimaryButton({
   children,
@@ -19,7 +26,7 @@ export function PrimaryButton({
   return (
     <button
       {...props}
-      className={`${base} bg-primary px-[22px] py-[11px] text-on-primary text-white ${className}`}
+      className={`${base} ${primaryVariant} ${className}`}
     >
       {children}
     </button>
@@ -34,7 +41,7 @@ export function SecondaryButton({
   return (
     <button
       {...props}
-      className={`${base} border border-primary bg-transparent px-[22px] py-[11px] text-primary ${className}`}
+      className={`${base} ${secondaryVariant} ${className}`}
     >
       {children}
     </button>
@@ -53,7 +60,7 @@ export function PrimaryLink({
   return (
     <Link
       href={href}
-      className={`${base} bg-primary px-[22px] py-[11px] text-white ${className}`}
+      className={`${base} ${primaryVariant} ${className}`}
     >
       {children}
     </Link>
@@ -72,7 +79,7 @@ export function SecondaryLink({
   return (
     <Link
       href={href}
-      className={`${base} border border-primary bg-transparent px-[22px] py-[11px] text-primary ${className}`}
+      className={`${base} ${secondaryVariant} ${className}`}
     >
       {children}
     </Link>

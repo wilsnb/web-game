@@ -36,7 +36,7 @@ export function Scoreboard({
                 />
               )}
               <span
-                className={`text-body-apple ${
+                className={`text-body-apple transition-colors duration-base ease-soft ${
                   isCurrent ? "font-semibold text-primary" : textMain
                 }`}
               >
