@@ -9,9 +9,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/privacy" },
 };
 
-// TODO: replace the bracketed placeholders before publishing.
-const CONTACT_EMAIL = "[your-contact-email@example.com]";
-const EFFECTIVE_DATE = "[effective date]";
+// NOTE: confirm this mailbox is actually set up and monitored before relying
+// on it publicly. Swap in your real support/contact address once you have one.
+const CONTACT_EMAIL = "support@qwardoo.com";
+const EFFECTIVE_DATE = "September 11, 2026";
 
 export default function PrivacyPage() {
   return (
@@ -45,6 +46,15 @@ export default function PrivacyPage() {
             sets authentication cookies in your browser. These are essential for
             login to work.
           </li>
+          <li>
+            <strong>Payment information (only if you subscribe).</strong> If you
+            purchase an optional premium subscription, payment is processed by
+            our payment provider (Midtrans). Your card and payment details are
+            entered with and handled by Midtrans — we do not receive or store
+            your full payment card details. We keep a record of your
+            subscription status (for example, active or expired) so we can
+            provide premium access.
+          </li>
         </ul>
       </LegalSection>
 
@@ -54,6 +64,10 @@ export default function PrivacyPage() {
           <li>
             To save and show your gameplay progress and scores when you&apos;re
             signed in.
+          </li>
+          <li>
+            To provide and manage your premium subscription, if you choose to
+            purchase one.
           </li>
         </ul>
         <p>
@@ -91,6 +105,10 @@ export default function PrivacyPage() {
           <li>
             <strong>Vercel</strong> — hosting for the website.
           </li>
+          <li>
+            <strong>Midtrans</strong> — payment processing for optional premium
+            subscriptions.
+          </li>
         </ul>
       </LegalSection>
 
@@ -107,8 +125,13 @@ export default function PrivacyPage() {
           <li>You can use the game as a guest, without an account.</li>
           <li>You can sign out at any time from the navigation bar.</li>
           <li>
-            You can request access to, or deletion of, your account and saved
-            gameplay data by emailing us at {CONTACT_EMAIL}.
+            You can delete your account yourself at any time from your account
+            settings. This permanently removes your profile and saved gameplay
+            data.
+          </li>
+          <li>
+            You can also request access to, or deletion of, your account and
+            saved gameplay data by emailing us at {CONTACT_EMAIL}.
           </li>
         </ul>
       </LegalSection>

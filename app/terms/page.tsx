@@ -9,9 +9,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/terms" },
 };
 
-// TODO: replace the bracketed placeholders before publishing.
-const CONTACT_EMAIL = "[your-contact-email@example.com]";
-const EFFECTIVE_DATE = "[effective date]";
+// NOTE: confirm this mailbox is set up before relying on it publicly.
+const CONTACT_EMAIL = "support@qwardoo.com";
+const EFFECTIVE_DATE = "September 11, 2026";
+// TODO: set the country/state whose laws govern these terms (e.g. "Indonesia").
 const JURISDICTION = "[your country / state]";
 
 export default function TermsPage() {
@@ -25,9 +26,10 @@ export default function TermsPage() {
 
       <LegalSection heading="What Qwardoo is">
         <p>
-          Qwardoo is a free, for-fun, pass-and-play party quiz game you play on a
-          shared device. It is provided as a hobby/personal project, not a
-          commercial product.
+          Qwardoo is a pass-and-play party quiz game you play on a shared
+          device. The core game is free to play. We also offer an optional paid
+          premium subscription with additional features; the free experience
+          does not require any payment.
         </p>
       </LegalSection>
 
@@ -61,6 +63,35 @@ export default function TermsPage() {
         </p>
       </LegalSection>
 
+      <LegalSection heading="Payments and subscriptions">
+        <ul className="ml-lg list-disc space-y-xxs">
+          <li>
+            Qwardoo offers an optional premium subscription. Buying it is
+            entirely your choice — the core game remains free.
+          </li>
+          <li>
+            Payments are processed by our payment provider, Midtrans. By
+            subscribing, you also agree to Midtrans&apos;s applicable terms, and
+            you confirm you&apos;re authorized to use the payment method you
+            provide.
+          </li>
+          <li>
+            Prices and what&apos;s included in premium may change over time. Any
+            change applies going forward, not to a period you&apos;ve already
+            paid for.
+          </li>
+          <li>
+            You can stop using premium at any time. Unless stated otherwise at
+            purchase, a subscription runs for the period you paid for and does
+            not automatically grant a refund for the unused part of that period.
+          </li>
+          <li>
+            For questions about billing, a charge, or a refund request, contact
+            us at {CONTACT_EMAIL} and we&apos;ll do our best to help.
+          </li>
+        </ul>
+      </LegalSection>
+
       <LegalSection heading="Acceptable use">
         <p>When using the Service, you agree not to:</p>
         <ul className="ml-lg list-disc space-y-xxs">
@@ -87,10 +118,11 @@ export default function TermsPage() {
 
       <LegalSection heading="The Service is provided “as is”">
         <p>
-          The Service is provided free of charge, &ldquo;as is&rdquo; and
-          &ldquo;as available,&rdquo; without warranties of any kind. We
-          don&apos;t guarantee the Service will always be available,
-          error-free, or that quiz data is complete or perfectly accurate.
+          The Service is provided &ldquo;as is&rdquo; and &ldquo;as
+          available,&rdquo; without warranties of any kind. We don&apos;t
+          guarantee the Service will always be available, error-free, or that
+          quiz data is complete or perfectly accurate. This applies to both the
+          free game and any premium features.
         </p>
       </LegalSection>
 
@@ -98,8 +130,9 @@ export default function TermsPage() {
         <p>
           To the fullest extent permitted by law, the Service operator will not
           be liable for any indirect, incidental, or consequential damages
-          arising from your use of the Service. Because the Service is free, our
-          total liability is limited to the greatest extent the law allows.
+          arising from your use of the Service. To the greatest extent the law
+          allows, our total liability is limited to the amount you paid us (if
+          any) in the twelve months before the claim.
         </p>
       </LegalSection>
 
