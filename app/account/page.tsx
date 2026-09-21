@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { AccountTabs } from "@/components/AccountTabs";
 import { ProfileVisibilityToggle } from "@/components/ProfileVisibilityToggle";
+import { DeleteAccountSection } from "@/components/DeleteAccountSection";
 import { getProfile } from "@/lib/profile";
 import { formatIdr, PLAN } from "@/lib/subscription/plan";
 import {
@@ -193,9 +194,12 @@ export default async function AccountPage() {
             >
               Privacy Policy
             </Link>
-            . To delete your account and data, see the contact details there.
+            .
           </p>
         </div>
+
+        {/* Danger zone — permanent account deletion (kept last, in red) */}
+        <DeleteAccountSection />
       </section>
 
       <SiteFooter />
