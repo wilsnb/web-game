@@ -54,12 +54,24 @@ export function GameBoard({
   state,
   onGuess,
   onSkip,
+  interactive = true,
+  timerNode,
+  waitingNode,
+  extraControls,
 }: {
   quiz: Quiz;
   settings: GameSettings;
   state: GameState;
   onGuess: (guess: string) => void;
   onSkip: () => void;
+  /** When false, hide the guess input + skip (e.g. it's not this player's turn). */
+  interactive?: boolean;
+  /** Custom timer UI (multiplayer passes its shared countdown). */
+  timerNode?: React.ReactNode;
+  /** Shown in place of the input when not interactive (e.g. "Waiting for X"). */
+  waitingNode?: React.ReactNode;
+  /** Extra controls under the turn area (e.g. host "skip player"). */
+  extraControls?: React.ReactNode;
 }) {
   const [guess, setGuess] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -141,50 +153,64 @@ export function GameBoard({
         </h2>
       </div>
 
-      {settings.timerEnabled && (
-        <div className="mb-lg text-center">
-          <span
-            className={`text-tagline font-semibold tabular-nums ${
-              secondsLeft <= 5 ? "text-primary" : "text-ink-muted-80"
-            }`}
-          >
-            {secondsLeft}s
-          </span>
-        </div>
+      {/* Timer: custom node in multiplayer, else the local per-guess timer. */}
+      {timerNode ? (
+        <div className="mb-lg">{timerNode}</div>
+      ) : (
+        settings.timerEnabled && (
+          <div className="mb-lg text-center">
+            <span
+              className={`text-tagline font-semibold tabular-nums ${
+                secondsLeft <= 5 ? "text-primary" : "text-ink-muted-80"
+              }`}
+            >
+              {secondsLeft}s
+            </span>
+          </div>
+        )
       )}
 
-      {/* Guess input */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          submit();
-        }}
-        className="mb-md flex flex-col gap-sm sm:flex-row"
-      >
-        <input
-          ref={inputRef}
-          type="text"
-          value={guess}
-          onChange={(e) => setGuess(e.target.value)}
-          placeholder="Type your guess…"
-          autoComplete="off"
-          aria-label={`${currentTeam.name}'s guess`}
-          className="focus-ring h-[44px] flex-1 rounded-pill border border-black/[0.08] bg-canvas px-[20px] text-body-apple text-ink transition-all duration-base ease-soft focus:border-primary"
-        />
-        <PrimaryButton type="submit" className="h-[44px]">
-          Submit
-        </PrimaryButton>
-      </form>
+      {interactive ? (
+        <>
+          {/* Guess input */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              submit();
+            }}
+            className="mb-md flex flex-col gap-sm sm:flex-row"
+          >
+            <input
+              ref={inputRef}
+              type="text"
+              value={guess}
+              onChange={(e) => setGuess(e.target.value)}
+              placeholder="Type your guess…"
+              autoComplete="off"
+              aria-label={`${currentTeam.name}'s guess`}
+              className="focus-ring h-[44px] flex-1 rounded-pill border border-black/[0.08] bg-canvas px-[20px] text-body-apple text-ink transition-all duration-base ease-soft focus:border-primary"
+            />
+            <PrimaryButton type="submit" className="h-[44px]">
+              Submit
+            </PrimaryButton>
+          </form>
 
-      <div className="mb-xl flex justify-center">
-        <button
-          type="button"
-          onClick={onSkip}
-          className="focus-ring press-scale rounded-pill px-sm py-xxs text-caption text-primary transition-colors duration-fast ease-soft hover:text-primary-focus"
-        >
-          Pass / skip this guess
-        </button>
-      </div>
+          <div className="mb-xl flex justify-center">
+            <button
+              type="button"
+              onClick={onSkip}
+              className="focus-ring press-scale rounded-pill px-sm py-xxs text-caption text-primary transition-colors duration-fast ease-soft hover:text-primary-focus"
+            >
+              Pass / skip this guess
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="mb-xl flex flex-col items-center gap-sm">
+          {waitingNode}
+          {extraControls}
+        </div>
+      )}
 
       <GuessFeedback state={state} />
 

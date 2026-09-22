@@ -1,29 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRoom } from "@/lib/multiplayer/useRoom";
-import type { RoomGame } from "@/lib/multiplayer/room";
+import { adaptRoomGame } from "@/lib/multiplayer/adapter";
+import type { Quiz } from "@/lib/types";
+import { GameBoard } from "@/components/GameBoard";
+import { ResultsScreen } from "@/components/ResultsScreen";
 
 /**
- * Room view driven entirely by the synced shared state.
- *  - lobby: players + settings; host sees "Start game".
- *  - playing: whose-turn banner; the current player gets a guess input, others
- *    see a waiting state; live scoreboard + progress + guess history.
- *  - finished: shared final scoreboard + winner.
+ * Room view driven entirely by the synced shared state, rendering the SAME
+ * game UI as single-device:
+ *  - lobby: players + settings; host sees "Start game"; anyone can copy the
+ *    join link.
+ *  - playing: the real GameBoard (title, progress, scores, history, feedback),
+ *    with the guess input gated to the current player and a shared countdown.
+ *  - finished: the real ResultsScreen (answer reveal + ratings + winner).
  *
  * "My id" is the auth id for logged-in players, or the locally-stored guestId
  * for guests — used to tell whether it's the viewer's turn.
  */
 export function RoomView({
   code,
+  quiz,
   viewerId,
 }: {
   code: string;
+  quiz: Quiz;
   viewerId: string | null;
 }) {
   const { state, connected } = useRoom(code);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   // Effective identity: auth id, else the guest id saved on join.
   const [myId, setMyId] = useState<string | null>(viewerId);
@@ -37,6 +45,53 @@ export function RoomView({
 
   const host = state?.players.find((p) => p.isHost);
   const isHost = Boolean(myId && host && host.id === myId);
+
+  // Auto-join for people who arrived via the shared invite link.
+  //  - Signed-in visitors join automatically by their auth id.
+  //  - Guests are prompted for a name first (guestNeedsName), then join.
+  const inRoom = Boolean(myId && state?.players.some((p) => p.id === myId));
+  const [joinName, setJoinName] = useState("");
+  const [joining, setJoining] = useState(false);
+
+  const autoJoin = useCallback(
+    async (guestName?: string) => {
+      setJoining(true);
+      setError(null);
+      let guestId = "";
+      if (!viewerId) {
+        guestId = sessionStorage.getItem("qwardoo:guestId") || "";
+        if (!guestId) {
+          guestId = "guest_" + Math.random().toString(36).slice(2, 10);
+          sessionStorage.setItem("qwardoo:guestId", guestId);
+        }
+        if (guestName) sessionStorage.setItem("qwardoo:guestName", guestName);
+        setMyId(guestId);
+      }
+      const res = await fetch("/api/rooms/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, guestName: guestName ?? "", guestId }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => null);
+        setError(d?.error ?? "Could not join this room.");
+      }
+      setJoining(false);
+    },
+    [code, viewerId]
+  );
+
+  // Signed-in visitors who aren't members yet: join automatically once.
+  const [autoJoined, setAutoJoined] = useState(false);
+  useEffect(() => {
+    if (!state) return;
+    if (state.phase !== "lobby") return; // can't join a game already in progress
+    if (inRoom || autoJoined) return;
+    if (viewerId) {
+      setAutoJoined(true);
+      autoJoin();
+    }
+  }, [state, inRoom, autoJoined, viewerId, autoJoin]);
 
   async function start() {
     setBusy(true);
@@ -53,13 +108,38 @@ export function RoomView({
     setBusy(false);
   }
 
+  async function copyLink() {
+    const url = `${window.location.origin}/multiplayer/${code}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard blocked — ignore, the code is still visible */
+    }
+  }
+
   if (!state) {
     return <p className="font-haas text-at-body-md text-at-muted">Loading room…</p>;
   }
 
+  // Playing / finished both render the real game components via the adapter.
+  if ((state.phase === "playing" || state.phase === "finished") && state.game) {
+    return (
+      <MultiplayerGame
+        code={code}
+        quiz={quiz}
+        room={state}
+        myId={myId}
+        isHost={isHost}
+      />
+    );
+  }
+
+  // LOBBY
   return (
     <div className="flex flex-col gap-lg">
-      {/* Code + connection */}
+      {/* Code + connection + copy link */}
       <div className="rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card">
         <p className="font-haas text-at-caption uppercase tracking-wide text-at-muted">
           Room code
@@ -68,63 +148,78 @@ export function RoomView({
           {code}
         </p>
         <p className="mt-xs font-haas text-at-caption text-at-muted">
-          {connected ? "🟢 Live" : "Connecting…"} ·{" "}
-          {state.phase === "lobby"
-            ? "Waiting to start"
-            : state.phase === "playing"
-            ? "In progress"
-            : "Finished"}
+          {connected ? "🟢 Live" : "Connecting…"} · Waiting to start
         </p>
+        <button
+          type="button"
+          onClick={copyLink}
+          className="mt-sm inline-flex h-[36px] items-center justify-center rounded-at-lg border border-at-hairline bg-at-canvas px-md font-haas text-at-caption font-medium text-at-ink transition-all duration-base ease-soft hover:border-at-border-strong hover:shadow-at-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link"
+        >
+          {copied ? "Link copied ✓" : "Copy invite link"}
+        </button>
       </div>
 
-      {/* LOBBY */}
-      {state.phase === "lobby" && (
-        <>
-          <PlayersCard players={state.players} myId={myId} />
-          <div className="rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card">
-            <p className="font-haas text-at-body-md text-at-ink">
-              {state.settings.rounds} rounds · {state.settings.guessesPerRound}{" "}
-              guesses per round · {state.settings.turnSeconds}s per turn
+      {/* Guest link-visitor who hasn't joined yet: prompt for a name. */}
+      {!inRoom && !viewerId && (
+        <div className="motion-rise rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card">
+          <p className="font-haas text-at-body-md text-at-ink">
+            Join this room to play
+          </p>
+          <div className="mt-sm flex flex-col gap-sm sm:flex-row">
+            <input
+              type="text"
+              value={joinName}
+              onChange={(e) => setJoinName(e.target.value)}
+              maxLength={24}
+              placeholder="Your name"
+              className="h-[44px] flex-1 rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink transition-all duration-base ease-soft focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
+            />
+            <button
+              type="button"
+              disabled={joining || !joinName.trim()}
+              onClick={() => autoJoin(joinName.trim())}
+              className="inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-all duration-base ease-soft hover:bg-at-primary-active disabled:opacity-60"
+            >
+              {joining ? "Joining…" : "Join"}
+            </button>
+          </div>
+          {error && (
+            <p className="motion-fade mt-sm font-haas text-at-body-md text-at-coral">
+              {error}
             </p>
-            {isHost ? (
-              <>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={start}
-                  className="mt-md inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-all duration-base ease-soft will-change-transform hover:bg-at-primary-active hover:-translate-y-[1px] hover:shadow-at-card-hover active:translate-y-0 disabled:opacity-60 disabled:translate-y-0 disabled:shadow-none"
-                >
-                  {busy ? "Starting…" : "Start game"}
-                </button>
-                {error && (
-                  <p className="motion-fade mt-sm font-haas text-at-body-md text-at-coral">
-                    {error}
-                  </p>
-                )}
-              </>
-            ) : (
-              <p className="mt-md font-haas text-at-body-md text-at-muted">
-                Waiting for the host to start…
+          )}
+        </div>
+      )}
+
+      <PlayersCard players={state.players} myId={myId} />
+
+      <div className="rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card">
+        <p className="font-haas text-at-body-md text-at-ink">
+          {state.settings.rounds} rounds · {state.settings.guessesPerRound}{" "}
+          guesses per round · {state.settings.turnSeconds}s per turn
+        </p>
+        {isHost ? (
+          <>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={start}
+              className="mt-md inline-flex h-[44px] items-center justify-center rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-all duration-base ease-soft will-change-transform hover:bg-at-primary-active hover:-translate-y-[1px] hover:shadow-at-card-hover active:translate-y-0 disabled:opacity-60 disabled:translate-y-0 disabled:shadow-none"
+            >
+              {busy ? "Starting…" : "Start game"}
+            </button>
+            {error && (
+              <p className="motion-fade mt-sm font-haas text-at-body-md text-at-coral">
+                {error}
               </p>
             )}
-          </div>
-        </>
-      )}
-
-      {/* PLAYING */}
-      {state.phase === "playing" && state.game && (
-        <PlayingView
-          code={code}
-          game={state.game}
-          myId={myId}
-          isHost={isHost}
-        />
-      )}
-
-      {/* FINISHED */}
-      {state.phase === "finished" && state.game && (
-        <FinishedView game={state.game} myId={myId} />
-      )}
+          </>
+        ) : (
+          <p className="mt-md font-haas text-at-body-md text-at-muted">
+            Waiting for the host to start…
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -163,85 +258,52 @@ function PlayersCard({
   );
 }
 
-function Scoreboard({
-  game,
-  myId,
-}: {
-  game: RoomGame;
-  myId: string | null;
-}) {
-  const currentId = game.order[game.currentIndex];
-  return (
-    <div className="flex flex-wrap gap-sm">
-      {game.scores.map((s) => {
-        const isCurrent = s.playerId === currentId;
-        return (
-          <div
-            key={s.playerId}
-            className={`min-w-[110px] flex-1 rounded-at-md border p-md text-center transition-all duration-base ease-soft ${
-              isCurrent
-                ? "border-at-primary bg-at-primary/5 scale-[1.03] shadow-at-card"
-                : "border-at-hairline bg-at-canvas"
-            }`}
-          >
-            <div
-              className={`truncate font-haas text-at-caption font-medium ${
-                isCurrent ? "text-at-primary" : "text-at-muted"
-              }`}
-            >
-              {s.name}
-              {s.playerId === myId ? " (you)" : ""}
-            </div>
-            <div className="mt-xxs font-haas text-at-display-md tabular-nums text-at-ink">
-              {s.score}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function PlayingView({
+/**
+ * The live/finished multiplayer game. Adapts the shared RoomGame into the
+ * single-device GameState/GameSettings and renders the REAL GameBoard /
+ * ResultsScreen so multiplayer looks identical to solo play.
+ */
+function MultiplayerGame({
   code,
-  game,
+  quiz,
+  room,
   myId,
   isHost,
 }: {
   code: string;
-  game: RoomGame;
+  quiz: Quiz;
+  room: ReturnType<typeof useRoom>["state"] & object;
   myId: string | null;
   isHost: boolean;
 }) {
-  const [guess, setGuess] = useState("");
+  const game = room.game!;
+  const { state, settings, playerIds } = adaptRoomGame(room, game);
+
+  const currentPlayerId = playerIds[game.currentIndex];
+  const myTurn = myId === currentPlayerId;
+  const currentName =
+    game.scores.find((s) => s.playerId === currentPlayerId)?.name ?? "player";
+
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const currentId = game.order[game.currentIndex];
-  const current = game.scores.find((s) => s.playerId === currentId);
-  const myTurn = myId === currentId;
-
-  // Shared countdown to the server deadline. Every client renders the same
-  // number because turnEndsAt is an absolute timestamp in shared state.
+  // Shared countdown to the server deadline — same value on every device.
   const [remaining, setRemaining] = useState(() =>
     Math.max(0, Math.ceil((game.turnEndsAt - Date.now()) / 1000))
   );
-  // Guard so only one timeout request is fired per turn per client.
   const [firedFor, setFiredFor] = useState<number | null>(null);
 
   useEffect(() => {
-    const tick = () => {
+    const tick = () =>
       setRemaining(Math.max(0, Math.ceil((game.turnEndsAt - Date.now()) / 1000)));
-    };
     tick();
     const t = setInterval(tick, 250);
     return () => clearInterval(t);
   }, [game.turnEndsAt]);
 
-  // When the deadline passes, any client reports the timeout; the server
-  // re-validates it actually expired before skipping. We fire at most once per
-  // turn (keyed by turnEndsAt) to avoid a flood of requests.
+  // Any client reports the timeout once the deadline passes; server re-validates.
   useEffect(() => {
+    if (room.phase !== "playing") return;
     if (remaining > 0) return;
     if (firedFor === game.turnEndsAt) return;
     setFiredFor(game.turnEndsAt);
@@ -253,40 +315,35 @@ function PlayingView({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, guestId }),
-    }).catch(() => {
-      /* another client likely won the race; ignore */
-    });
-  }, [remaining, game.turnEndsAt, firedFor, code]);
+    }).catch(() => {});
+  }, [remaining, game.turnEndsAt, firedFor, code, room.phase]);
 
-  async function send(action: "guess" | "skip") {
-    if (busy) return;
-    setBusy(true);
-    setError(null);
-    const guestId =
-      typeof window !== "undefined"
-        ? sessionStorage.getItem("qwardoo:guestId") ?? undefined
-        : undefined;
-    const res = await fetch("/api/rooms/guess", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        code,
-        action,
-        guess: action === "guess" ? guess.trim() : undefined,
-        guestId,
-      }),
-    });
-    if (res.ok) {
-      setGuess("");
-    } else {
-      const d = await res.json().catch(() => null);
-      setError(d?.error ?? "Could not send.");
-    }
-    setBusy(false);
-  }
+  const send = useCallback(
+    async (action: "guess" | "skip", guess?: string) => {
+      setBusy(true);
+      setError(null);
+      const guestId =
+        typeof window !== "undefined"
+          ? sessionStorage.getItem("qwardoo:guestId") ?? undefined
+          : undefined;
+      const res = await fetch("/api/rooms/guess", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, action, guess, guestId }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => null);
+        setError(d?.error ?? "Could not send.");
+      }
+      setBusy(false);
+    },
+    [code]
+  );
+
+  const onGuess = useCallback((g: string) => send("guess", g), [send]);
+  const onSkip = useCallback(() => send("skip"), [send]);
 
   async function hostSkip() {
-    if (busy) return;
     setBusy(true);
     setError(null);
     const res = await fetch("/api/rooms/timeout", {
@@ -301,197 +358,67 @@ function PlayingView({
     setBusy(false);
   }
 
+  // FINISHED — the real results screen (answer reveal + ratings + winner).
+  // onReplay is omitted: multiplayer replays happen by creating a new room.
+  if (room.phase === "finished") {
+    return <ResultsScreen quiz={quiz} state={state} isSignedIn={Boolean(myId)} />;
+  }
+
+  // PLAYING — the real GameBoard, input gated to the current player.
   const lowTime = remaining <= 5;
-
-  return (
-    <div className="flex flex-col gap-lg">
-      {/* Status */}
-      <div className="flex items-center justify-between font-haas text-at-caption text-at-muted">
-        <span>
-          Round {game.round} of {game.rounds} · Guess {game.guessNumber} of{" "}
-          {game.guessesPerRound}
-        </span>
-        <span>{game.totalFound} found</span>
-      </div>
-
-      {/* Turn timer */}
-      <div className="flex items-center justify-between rounded-at-md border border-at-hairline bg-at-canvas px-md py-sm shadow-at-card">
-        <span className="font-haas text-at-caption uppercase tracking-wide text-at-muted">
-          Time left
-        </span>
-        <span
-          className={`font-haas text-at-title-md tabular-nums transition-colors duration-base ease-soft ${
-            lowTime ? "text-at-coral" : "text-at-ink"
-          }`}
-          role="timer"
-          aria-live="off"
-        >
-          {remaining}s
-        </span>
-      </div>
-
-      {/* Turn / input */}
-      <div
-        key={currentId}
-        className="motion-fade rounded-at-md border border-at-hairline bg-at-canvas p-lg text-center shadow-at-card"
+  const timerNode = (
+    <div className="mx-auto flex w-fit items-center gap-sm rounded-pill border border-divider-soft bg-canvas px-md py-[8px]">
+      <span className="text-caption text-ink-muted-48">Time left</span>
+      <span
+        className={`text-tagline font-semibold tabular-nums ${
+          lowTime ? "text-primary" : "text-ink-muted-80"
+        }`}
+        role="timer"
+        aria-live="off"
       >
-        {myTurn ? (
-          <>
-            <p className="font-haas text-at-body-md font-medium text-at-primary">
-              Your turn — make a guess
-            </p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (guess.trim()) send("guess");
-              }}
-              className="mt-md flex flex-col gap-sm sm:flex-row"
-            >
-              <input
-                type="text"
-                value={guess}
-                onChange={(e) => setGuess(e.target.value)}
-                autoFocus
-                placeholder="Type your guess…"
-                className="h-[44px] flex-1 rounded-at-sm border border-at-hairline bg-at-canvas px-md font-haas text-at-body-md text-at-ink transition-all duration-base ease-soft focus:border-at-link focus:outline-none focus:ring-2 focus:ring-at-link/30"
-              />
-              <button
-                type="submit"
-                disabled={busy || !guess.trim()}
-                className="h-[44px] rounded-at-lg bg-at-primary px-lg font-haas text-at-button font-medium text-at-on-dark transition-all duration-base ease-soft will-change-transform hover:bg-at-primary-active hover:-translate-y-[1px] hover:shadow-at-card-hover active:translate-y-0 disabled:opacity-60 disabled:translate-y-0 disabled:shadow-none"
-              >
-                Guess
-              </button>
-            </form>
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() => send("skip")}
-              className="mt-sm font-haas text-at-caption text-at-link transition-colors duration-fast ease-soft hover:text-at-link-active"
-            >
-              Pass / skip
-            </button>
-          </>
-        ) : (
-          <>
-            <p className="font-haas text-at-body-md text-at-muted">
-              Waiting for{" "}
-              <span className="font-medium text-at-ink">{current?.name}</span> to
-              guess…
-            </p>
-            {isHost && (
-              <button
-                type="button"
-                disabled={busy}
-                onClick={hostSkip}
-                className="mt-md inline-flex h-[40px] items-center justify-center rounded-at-lg border border-at-hairline bg-at-canvas px-md font-haas text-at-caption font-medium text-at-ink transition-all duration-base ease-soft hover:border-at-coral hover:text-at-coral hover:shadow-at-card disabled:opacity-60"
-              >
-                Skip {current?.name ?? "player"}
-              </button>
-            )}
-          </>
-        )}
-        {error && (
-          <p className="motion-fade mt-sm font-haas text-at-body-md text-at-coral">{error}</p>
-        )}
-      </div>
-
-      {/* Scores */}
-      <div>
-        <h3 className="mb-sm font-haas text-at-caption font-medium uppercase tracking-wide text-at-muted">
-          Scores
-        </h3>
-        <Scoreboard game={game} myId={myId} />
-      </div>
-
-      {/* History */}
-      <div>
-        <h3 className="mb-sm font-haas text-at-caption font-medium uppercase tracking-wide text-at-muted">
-          Guess history
-        </h3>
-        {game.history.length === 0 ? (
-          <p className="rounded-at-md border border-dashed border-at-hairline p-md font-haas text-at-body-md text-at-muted">
-            No guesses yet.
-          </p>
-        ) : (
-          <ul className="flex max-h-[280px] flex-col gap-xs overflow-y-auto">
-            {[...game.history].reverse().map((h) => (
-              <li
-                key={h.id}
-                className="motion-rise flex items-center justify-between gap-sm rounded-at-md border border-at-hairline bg-at-canvas px-md py-sm font-haas text-at-body-md"
-              >
-                <span className="flex min-w-0 items-center gap-sm">
-                  <span className="w-[80px] flex-none truncate text-at-caption font-medium text-at-muted">
-                    {h.playerName}
-                  </span>
-                  <span className="truncate text-at-ink">
-                    {h.skipped ? (
-                      <span className="italic text-at-muted">passed</span>
-                    ) : (
-                      `"${h.guess}"`
-                    )}
-                  </span>
-                </span>
-                <span className="flex-none text-at-caption">
-                  {h.correct ? (
-                    <span className="font-medium text-at-success">
-                      ✓ {h.matchedAnswer} · #{h.matchedRank} · +{h.points}
-                    </span>
-                  ) : h.alreadyClaimed ? (
-                    <span className="text-at-muted">already found</span>
-                  ) : h.skipped ? (
-                    <span className="text-at-muted">—</span>
-                  ) : (
-                    <span className="text-at-muted">✗</span>
-                  )}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+        {remaining}s
+      </span>
     </div>
   );
-}
 
-function FinishedView({
-  game,
-  myId,
-}: {
-  game: RoomGame;
-  myId: string | null;
-}) {
-  const sorted = [...game.scores].sort((a, b) => b.score - a.score);
-  const top = sorted[0]?.score ?? 0;
-  const winners = sorted.filter((s) => s.score === top);
-  const isTie = winners.length > 1;
+  const waitingNode = (
+    <p className="text-body-apple text-ink-muted-80">
+      Waiting for <span className="font-semibold text-ink">{currentName}</span>{" "}
+      to guess…
+    </p>
+  );
+
+  const extraControls = (
+    <>
+      {isHost && !myTurn && (
+        <button
+          type="button"
+          disabled={busy}
+          onClick={hostSkip}
+          className="inline-flex h-[40px] items-center justify-center rounded-pill border border-divider-soft bg-canvas px-md font-haas text-caption font-medium text-ink transition-all duration-base ease-soft hover:border-primary hover:text-primary disabled:opacity-60"
+        >
+          Skip {currentName}
+        </button>
+      )}
+      {error && (
+        <p className="motion-fade text-caption text-primary" role="alert">
+          {error}
+        </p>
+      )}
+    </>
+  );
 
   return (
-    <div className="motion-rise rounded-at-md border border-at-hairline bg-at-canvas p-lg text-center shadow-at-card">
-      <p className="font-haas text-at-caption uppercase tracking-wide text-at-muted">
-        Final results
-      </p>
-      <h2 className="motion-pop mt-xs font-haas text-at-display-md font-normal text-at-ink">
-        {isTie
-          ? "It's a tie!"
-          : `${winners[0]?.name ?? "Someone"} wins`}
-      </h2>
-
-      <ol className="mx-auto mt-lg flex max-w-[360px] flex-col text-left">
-        {sorted.map((s, i) => (
-          <li
-            key={s.playerId}
-            className="motion-rise flex items-center justify-between border-b border-at-hairline py-sm font-haas text-at-body-md text-at-ink last:border-b-0"
-            style={{ animationDelay: `${120 + i * 70}ms` }}
-          >
-            <span>
-              {i + 1}. {s.name}
-              {s.playerId === myId ? " (you)" : ""}
-            </span>
-            <span className="font-medium">{s.score}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
+    <GameBoard
+      quiz={quiz}
+      settings={settings}
+      state={state}
+      onGuess={onGuess}
+      onSkip={onSkip}
+      interactive={myTurn && !busy}
+      timerNode={timerNode}
+      waitingNode={waitingNode}
+      extraControls={extraControls}
+    />
   );
 }

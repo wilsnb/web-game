@@ -136,9 +136,11 @@ export function ResultsScreen({
         </div>
 
         <div className="mt-xl flex flex-col items-center justify-center gap-sm sm:flex-row">
-          <PrimaryButton onClick={onReplay} className="min-w-[180px]">
-            Play again
-          </PrimaryButton>
+          {onReplay && (
+            <PrimaryButton onClick={onReplay} className="min-w-[180px]">
+              Play again
+            </PrimaryButton>
+          )}
           <SecondaryLink href="/" className="min-w-[180px] !text-primary-on-dark !border-primary-on-dark">
             Back to categories
           </SecondaryLink>

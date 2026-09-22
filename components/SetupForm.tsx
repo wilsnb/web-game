@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { GameSettings } from "@/lib/gameState";
 import type { Quiz } from "@/lib/types";
 import { PrimaryButton } from "./Buttons";
+import { normalizeCode, isValidCode, newGuestId } from "@/lib/multiplayer/room";
 
 const MAX_TEAMS = 7;
 const MIN_TEAMS = 1;
@@ -61,11 +63,19 @@ function Stepper({
 
 export function SetupForm({
   quiz,
+  isSignedIn = false,
   onStart,
 }: {
   quiz: Quiz;
+  isSignedIn?: boolean;
   onStart: (settings: GameSettings) => void;
 }) {
+  const router = useRouter();
+
+  // "device" = classic pass-and-play on this device; "online" = create/join a
+  // multiplayer room for THIS quiz.
+  const [mode, setMode] = useState<"device" | "online">("device");
+
   const [teamCount, setTeamCount] = useState(2);
   const [teamNames, setTeamNames] = useState<string[]>([
     "Player 1",
@@ -80,6 +90,74 @@ export function SetupForm({
   const [guessesPerRound, setGuessesPerRound] = useState(3);
   const [timerEnabled, setTimerEnabled] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(30);
+
+  // Online-mode state.
+  const [turnSeconds, setTurnSeconds] = useState(30);
+  const [joinCode, setJoinCode] = useState("");
+  const [guestName, setGuestName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [mpError, setMpError] = useState<string | null>(null);
+
+  async function createRoom() {
+    if (!isSignedIn) {
+      router.push(`/login?next=/play/${quiz.id}`);
+      return;
+    }
+    setBusy(true);
+    setMpError(null);
+    const res = await fetch("/api/rooms/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        quizId: quiz.id,
+        rounds,
+        guessesPerRound,
+        turnSeconds,
+      }),
+    });
+    if (res.ok) {
+      const { code } = await res.json();
+      router.push(`/multiplayer/${code}`);
+    } else {
+      const d = await res.json().catch(() => null);
+      setMpError(d?.error ?? "Could not create room.");
+      setBusy(false);
+    }
+  }
+
+  async function joinRoom() {
+    const c = normalizeCode(joinCode);
+    if (!isValidCode(c)) {
+      setMpError("Enter a valid 4-character room code.");
+      return;
+    }
+    if (!isSignedIn && !guestName.trim()) {
+      setMpError("Enter your name to join.");
+      return;
+    }
+    setBusy(true);
+    setMpError(null);
+
+    let guestId = "";
+    if (!isSignedIn) {
+      guestId = sessionStorage.getItem("qwardoo:guestId") || newGuestId();
+      sessionStorage.setItem("qwardoo:guestId", guestId);
+      sessionStorage.setItem("qwardoo:guestName", guestName.trim());
+    }
+
+    const res = await fetch("/api/rooms/join", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: c, guestName: guestName.trim(), guestId }),
+    });
+    if (res.ok) {
+      router.push(`/multiplayer/${c}`);
+    } else {
+      const d = await res.json().catch(() => null);
+      setMpError(d?.error ?? "Could not join room.");
+      setBusy(false);
+    }
+  }
 
   function updateName(index: number, name: string) {
     setTeamNames((prev) => {
@@ -118,6 +196,41 @@ export function SetupForm({
         </p>
       </header>
 
+      {/* Mode toggle: pass-and-play on one device vs online with friends */}
+      <div className="mb-xl inline-flex rounded-pill border border-divider-soft bg-pearl p-[4px]">
+        <button
+          type="button"
+          onClick={() => {
+            setMode("device");
+            setMpError(null);
+          }}
+          className={`rounded-pill px-lg py-[10px] text-body-apple font-medium transition-all duration-base ease-soft ${
+            mode === "device"
+              ? "bg-canvas text-ink shadow-at-card"
+              : "text-ink-muted-48 hover:text-ink"
+          }`}
+        >
+          On this device
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setMode("online");
+            setMpError(null);
+          }}
+          className={`rounded-pill px-lg py-[10px] text-body-apple font-medium transition-all duration-base ease-soft ${
+            mode === "online"
+              ? "bg-canvas text-ink shadow-at-card"
+              : "text-ink-muted-48 hover:text-ink"
+          }`}
+        >
+          Online with friends
+        </button>
+      </div>
+
+      {/* DEVICE MODE — classic pass-and-play setup */}
+      {mode === "device" && (
+      <>
       <section className="mb-xl">
         <h2 className="mb-sm text-tagline font-semibold text-ink">
           Players
@@ -204,12 +317,116 @@ export function SetupForm({
           />
         )}
       </section>
+      </>
+      )}
 
-      <div className="flex justify-center">
-        <PrimaryButton onClick={handleStart} className="min-w-[200px]">
-          Start Game
-        </PrimaryButton>
-      </div>
+      {/* ONLINE MODE — host a room for this quiz or join a friend's */}
+      {mode === "online" && (
+        <div className="mb-xl flex flex-col gap-lg">
+          {/* Host */}
+          <section className="rounded-lg border border-divider-soft bg-canvas p-lg">
+            <h2 className="text-tagline font-semibold text-ink">
+              Host a room
+            </h2>
+            <p className="mt-xxs text-caption text-ink-muted-48">
+              {isSignedIn
+                ? "Set the rules, then share the code or link with friends. Everyone plays on their own device."
+                : "You need to be signed in to host a room."}
+            </p>
+
+            {isSignedIn && (
+              <div className="mt-md">
+                <Stepper
+                  label="Rounds"
+                  value={rounds}
+                  min={1}
+                  max={MAX_ROUNDS}
+                  onChange={setRounds}
+                  hint="How many times play cycles through"
+                />
+                <Stepper
+                  label="Guesses per round, per player"
+                  value={guessesPerRound}
+                  min={1}
+                  max={MAX_GUESSES}
+                  onChange={setGuessesPerRound}
+                  hint="Taken one at a time, in rotation"
+                />
+                <Stepper
+                  label="Seconds per turn"
+                  value={turnSeconds}
+                  min={10}
+                  max={120}
+                  onChange={setTurnSeconds}
+                  hint="Each player's turn auto-skips when time runs out"
+                />
+              </div>
+            )}
+
+            <div className="mt-md flex justify-center">
+              <PrimaryButton
+                onClick={createRoom}
+                disabled={busy}
+                className="min-w-[200px]"
+              >
+                {isSignedIn ? (busy ? "Creating…" : "Create room") : "Sign in to host"}
+              </PrimaryButton>
+            </div>
+          </section>
+
+          {/* Join */}
+          <section className="rounded-lg border border-divider-soft bg-canvas p-lg">
+            <h2 className="text-tagline font-semibold text-ink">Join a room</h2>
+            <p className="mt-xxs text-caption text-ink-muted-48">
+              Got a code from a friend? Enter it to join their game.
+            </p>
+            <div className="mt-md flex flex-col gap-sm">
+              {!isSignedIn && (
+                <input
+                  type="text"
+                  value={guestName}
+                  onChange={(e) => setGuestName(e.target.value)}
+                  maxLength={24}
+                  placeholder="Your name"
+                  className="focus-ring h-[44px] w-full rounded-pill border border-black/[0.08] bg-canvas px-[20px] text-body-apple text-ink transition-all duration-base ease-soft"
+                />
+              )}
+              <div className="flex flex-col gap-sm sm:flex-row">
+                <input
+                  type="text"
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                  maxLength={4}
+                  placeholder="CODE"
+                  className="focus-ring h-[44px] w-full max-w-[160px] rounded-pill border border-black/[0.08] bg-canvas px-[20px] text-body-strong uppercase tracking-widest text-ink transition-all duration-base ease-soft"
+                />
+                <PrimaryButton
+                  onClick={joinRoom}
+                  disabled={busy}
+                  className="min-w-[140px]"
+                >
+                  {busy ? "Joining…" : "Join room"}
+                </PrimaryButton>
+              </div>
+            </div>
+          </section>
+
+          {mpError && (
+            <p className="motion-fade text-center text-body-apple text-primary" role="alert">
+              {mpError}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Device-mode start button */}
+      {mode === "device" && (
+        <div className="flex justify-center">
+          <PrimaryButton onClick={handleStart} className="min-w-[200px]">
+            Start Game
+          </PrimaryButton>
+        </div>
+      )}
     </div>
   );
 }

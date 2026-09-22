@@ -65,6 +65,7 @@ export function GameClient({
       {screen === "setup" && (
         <SetupForm
           quiz={quiz}
+          isSignedIn={isSignedIn}
           onStart={(s) => {
             // Starting fresh clears any old stashed result.
             clearFinishedGame(quiz.id);
