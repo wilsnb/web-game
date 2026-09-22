@@ -123,6 +123,7 @@ export function ResultsScreen({
             }))}
           isSignedIn={isSignedIn}
           loginNext={`/play/${quiz.id}`}
+          source={quiz.source}
         />
 
         {/* Rate this game */}

@@ -19,10 +19,13 @@ export function AnswerReveal({
   entries,
   isSignedIn,
   loginNext,
+  source,
 }: {
   entries: RevealEntry[];
   isSignedIn: boolean;
   loginNext: string;
+  /** Where the ranked data came from — shown once answers are revealed. */
+  source?: string;
 }) {
   const [revealed, setRevealed] = useState(false);
   const showClear = isSignedIn && revealed;
@@ -63,6 +66,14 @@ export function AnswerReveal({
             </li>
           ))}
         </ol>
+
+        {/* Source — visible only once answers are revealed, so it never hints
+            anything during the blur. */}
+        {showClear && source && (
+          <p className="motion-fade mt-md text-caption leading-relaxed text-body-muted">
+            Source: {source}
+          </p>
+        )}
 
         {/* Overlay: shown until the answers are revealed. */}
         {!showClear && (
