@@ -46,60 +46,69 @@ export function Navbar({
     router.push(`/play/${id}`);
   }, [quizIds, router]);
 
+  const linkClass =
+    "whitespace-nowrap rounded-at-sm px-[6px] py-[6px] font-haas text-at-body-md text-at-link no-underline transition-colors duration-fast ease-soft hover:text-at-link-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link";
+
   return (
     <div className="sticky top-0 z-50 w-full border-b border-at-hairline bg-at-canvas">
-      <nav
-        aria-label="Primary"
-        className="mx-auto flex h-[64px] max-w-[1280px] items-center gap-md px-md sm:px-lg"
-      >
-        {/* Logo */}
-        <Link href="/" className="flex items-center no-underline" aria-label="Qwardoo home">
-          <Image
-            src="/logo.jpg"
-            alt="Qwardoo"
-            width={664}
-            height={190}
-            priority
-            className="h-[32px] w-auto"
-          />
-        </Link>
+      <nav aria-label="Primary" className="relative mx-auto max-w-[1280px] px-md sm:px-lg">
+        <div className="flex h-[56px] items-center gap-xs md:h-[64px] md:gap-md">
+          <Link
+            href="/"
+            className="flex shrink-0 items-center no-underline"
+            aria-label="Qwardoo home"
+          >
+            <Image
+              src="/logo.jpg"
+              alt="Qwardoo"
+              width={664}
+              height={190}
+              priority
+              className="h-[26px] w-auto md:h-[32px]"
+            />
+          </Link>
 
-        {/* Menu (categories dropdown) */}
-        <CategoriesDropdown categories={categories} />
+          <div className="hidden items-center md:flex">
+            <CategoriesDropdown categories={categories} />
+            <button type="button" onClick={goRandom} className={linkClass}>
+              Random
+            </button>
+            <Link href="/leaderboard" className={linkClass}>
+              Leaderboard
+            </Link>
+          </div>
 
-        {/* Random */}
-        <button
-          type="button"
-          onClick={goRandom}
-          className="font-haas text-at-body-md text-at-link transition-colors duration-fast ease-soft hover:text-at-link-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px]"
-        >
-          Random
-        </button>
+          <div className="ml-auto flex min-w-0 items-center justify-end gap-xxs md:ml-md md:flex-1 md:justify-center md:gap-md">
+            <SearchBar index={searchIndex} />
+          </div>
 
-        {/* Leaderboard */}
-        <Link
-          href="/leaderboard"
-          className="hidden font-haas text-at-body-md text-at-link no-underline transition-colors duration-fast ease-soft hover:text-at-link-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px] sm:inline-flex"
-        >
-          Leaderboard
-        </Link>
+          <Link
+            href="/subscribe"
+            className="hidden whitespace-nowrap rounded-at-sm px-[6px] py-[6px] font-haas text-at-body-md font-medium text-at-coral no-underline transition-all duration-fast ease-soft hover:opacity-80 hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link md:ml-md md:inline-flex"
+          >
+            Go Premium
+          </Link>
 
-        {/* Search (functional) — grows into the middle, hidden on small screens */}
-        <div className="ml-auto flex flex-1 justify-end md:ml-md md:justify-center">
-          <SearchBar index={searchIndex} />
+          <div className="flex shrink-0 items-center">
+            <AuthArea user={user} />
+          </div>
         </div>
 
-        {/* Go Premium (subscription) */}
-        <Link
-          href="/subscribe"
-          className="font-haas text-at-body-md font-medium text-at-coral no-underline transition-all duration-fast ease-soft hover:opacity-80 hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link rounded-at-sm px-[6px] py-[6px] md:ml-md"
-        >
-          Go Premium
-        </Link>
-
-        {/* Auth area (far right) */}
-        <div className="flex items-center">
-          <AuthArea user={user} />
+        {/* Phone: links that don't fit the top row live here. */}
+        <div className="flex h-[44px] items-center gap-xs overflow-x-auto border-t border-at-hairline md:hidden">
+          <CategoriesDropdown categories={categories} />
+          <button type="button" onClick={goRandom} className={linkClass}>
+            Random
+          </button>
+          <Link href="/leaderboard" className={linkClass}>
+            Leaderboard
+          </Link>
+          <Link
+            href="/subscribe"
+            className="ml-auto whitespace-nowrap rounded-at-sm px-[6px] py-[6px] font-haas text-at-body-md font-medium text-at-coral no-underline"
+          >
+            Go Premium
+          </Link>
         </div>
       </nav>
     </div>
@@ -141,11 +150,18 @@ function LoggedOutButtons() {
 
   return (
     <div className="flex items-center gap-xs">
+      {/* Phone: one compact control — two full buttons overflow the bar. */}
+      <Link
+        href="/login"
+        className="rounded-at-lg bg-at-primary px-sm py-[8px] font-haas text-at-body-md font-medium text-at-on-dark no-underline md:hidden"
+      >
+        Log in
+      </Link>
       <button
         type="button"
         disabled={busy}
         onClick={go}
-        className="rounded-at-lg border border-at-hairline bg-at-canvas px-md py-[8px] font-haas text-at-body-md font-medium text-at-ink transition-all duration-base ease-soft hover:border-at-border-strong hover:shadow-at-card hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60"
+        className="hidden rounded-at-lg border border-at-hairline bg-at-canvas px-md py-[8px] font-haas text-at-body-md font-medium text-at-ink transition-all duration-base ease-soft hover:border-at-border-strong hover:shadow-at-card hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60 md:inline-flex"
       >
         Log in
       </button>
@@ -153,7 +169,7 @@ function LoggedOutButtons() {
         type="button"
         disabled={busy}
         onClick={go}
-        className="rounded-at-lg bg-at-primary px-md py-[8px] font-haas text-at-body-md font-medium text-at-on-dark transition-all duration-base ease-soft hover:bg-at-primary-active hover:shadow-at-card-hover hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60"
+        className="hidden rounded-at-lg bg-at-primary px-md py-[8px] font-haas text-at-body-md font-medium text-at-on-dark transition-all duration-base ease-soft hover:bg-at-primary-active hover:shadow-at-card-hover hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-at-link disabled:opacity-60 md:inline-flex"
       >
         {busy ? "…" : "Create account"}
       </button>
