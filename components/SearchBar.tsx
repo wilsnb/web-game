@@ -66,7 +66,8 @@ export function SearchBar({ index }: { index: SearchItem[] }) {
   useEffect(() => {
     if (!mobileOpen) return;
     mobileInputRef.current?.focus();
-    function onKey(e: KeyboardEvent) {
+    // Use the DOM KeyboardEvent (not React's synthetic type) for addEventListener.
+    function onKey(e: globalThis.KeyboardEvent) {
       if (e.key === "Escape") {
         setMobileOpen(false);
         setOpen(false);
