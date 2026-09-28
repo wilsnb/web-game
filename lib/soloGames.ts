@@ -30,6 +30,16 @@ export const SOLO_GAMES: SoloGameMeta[] = [
     title: "Logic & Pattern Puzzle",
     description: "Spot the pattern, pick the answer.",
   },
+  {
+    id: "higher-or-lower",
+    title: "Higher or Lower",
+    description: "Guess which has more — keep your streak alive.",
+  },
+  {
+    id: "odd-one-out",
+    title: "Odd One Out",
+    description: "Four things, one doesn't belong. Spot it.",
+  },
 ];
 
 export function isSoloGameId(id: string): boolean {

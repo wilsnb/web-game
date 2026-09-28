@@ -40,6 +40,13 @@ export const CATALOG: CatalogCategory[] = [
     featuredOnHome: true,
     games: [
       {
+        id: "higher-or-lower",
+        title: "Higher or Lower",
+        description: "Guess which has more — keep your streak alive.",
+        comingSoon: false,
+        href: "/play/higher-or-lower",
+      },
+      {
         id: "top-100-streamed-artists",
         title: "Top 100 Most Streamed Artists",
         description: "Name the most-streamed artists of all time.",
@@ -131,6 +138,13 @@ export const CATALOG: CatalogCategory[] = [
         comingSoon: false,
         href: "/play/never-have-i-ever",
       },
+      {
+        id: "most-likely-to",
+        title: "Most Likely To",
+        description: "Read the card, point at whoever fits best.",
+        comingSoon: false,
+        href: "/play/most-likely-to",
+      },
     ],
   },
   {
@@ -162,6 +176,13 @@ export const CATALOG: CatalogCategory[] = [
     thumbnail: "/thumbnails/geography.svg",
     featuredOnHome: true,
     games: [
+      {
+        id: "odd-one-out",
+        title: "Odd One Out",
+        description: "Four things, one doesn't belong. Spot it.",
+        comingSoon: false,
+        href: "/play/odd-one-out",
+      },
       {
         id: "logic-pattern-puzzle",
         title: "Logic & Pattern Puzzle",

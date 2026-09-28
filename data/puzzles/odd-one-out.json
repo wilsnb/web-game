@@ -1,0 +1,33 @@
+{
+  "id": "odd-one-out",
+  "title": "Odd One Out",
+  "puzzles": [
+    { "items": ["Apple", "Banana", "Carrot", "Grape"], "answer": "Carrot", "reason": "The rest are fruit." },
+    { "items": ["Dog", "Cat", "Shark", "Rabbit"], "answer": "Shark", "reason": "The rest are land mammals." },
+    { "items": ["Red", "Blue", "Green", "Square"], "answer": "Square", "reason": "The rest are colors." },
+    { "items": ["Piano", "Guitar", "Violin", "Painting"], "answer": "Painting", "reason": "The rest are instruments." },
+    { "items": ["Mercury", "Venus", "Mars", "Moon"], "answer": "Moon", "reason": "The rest are planets." },
+    { "items": ["2", "4", "6", "9"], "answer": "9", "reason": "The rest are even numbers." },
+    { "items": ["Triangle", "Circle", "Square", "Cube"], "answer": "Cube", "reason": "The rest are 2D shapes." },
+    { "items": ["Rose", "Tulip", "Oak", "Daisy"], "answer": "Oak", "reason": "The rest are flowers; oak is a tree." },
+    { "items": ["Copper", "Gold", "Silver", "Diamond"], "answer": "Diamond", "reason": "The rest are metals." },
+    { "items": ["January", "March", "Monday", "July"], "answer": "Monday", "reason": "The rest are months." },
+    { "items": ["Whale", "Dolphin", "Tuna", "Seal"], "answer": "Tuna", "reason": "The rest are mammals; tuna is a fish." },
+    { "items": ["Football", "Tennis", "Chess", "Basketball"], "answer": "Chess", "reason": "The rest are physical sports." },
+    { "items": ["Spain", "France", "Tokyo", "Italy"], "answer": "Tokyo", "reason": "The rest are countries; Tokyo is a city." },
+    { "items": ["Eagle", "Sparrow", "Bat", "Robin"], "answer": "Bat", "reason": "The rest are birds; a bat is a mammal." },
+    { "items": ["3", "5", "7", "8"], "answer": "8", "reason": "The rest are odd numbers." },
+    { "items": ["Coffee", "Tea", "Juice", "Bread"], "answer": "Bread", "reason": "The rest are drinks." },
+    { "items": ["Car", "Bus", "Bicycle", "Airplane"], "answer": "Airplane", "reason": "The rest travel on the ground." },
+    { "items": ["Sun", "Star", "Lamp", "Comet"], "answer": "Lamp", "reason": "The rest are natural light sources in space." },
+    { "items": ["Shirt", "Hat", "Shoes", "Table"], "answer": "Table", "reason": "The rest are clothing." },
+    { "items": ["Summer", "Winter", "Autumn", "Sunday"], "answer": "Sunday", "reason": "The rest are seasons." },
+    { "items": ["Snake", "Lizard", "Frog", "Crocodile"], "answer": "Frog", "reason": "The rest are reptiles; a frog is an amphibian." },
+    { "items": ["Pen", "Pencil", "Marker", "Eraser"], "answer": "Eraser", "reason": "The rest are for writing; an eraser removes." },
+    { "items": ["Nile", "Amazon", "Everest", "Ganges"], "answer": "Everest", "reason": "The rest are rivers; Everest is a mountain." },
+    { "items": ["Square", "Rectangle", "Rhombus", "Sphere"], "answer": "Sphere", "reason": "The rest are 2D quadrilaterals." },
+    { "items": ["Milk", "Cheese", "Yogurt", "Apple"], "answer": "Apple", "reason": "The rest are dairy." },
+    { "items": ["Guitar", "Drums", "Flute", "Microphone"], "answer": "Microphone", "reason": "The rest are instruments." },
+    { "items": ["Monday", "Tuesday", "Friday", "December"], "answer": "December", "reason": "The rest are days of the week." }
+  ]
+}
