@@ -2,21 +2,29 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getAllQuizIds, getQuizById } from "@/lib/quizzes";
 import { getAllDeckIds, getDeckById } from "@/lib/decks";
+import {
+  getAllSoloGameIds,
+  getSoloGameById,
+  isSoloGameId,
+} from "@/lib/soloGames";
 import { isProGameId } from "@/data/catalog";
 import { hasActiveSubscription } from "@/lib/subscription/subscription";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { GameClient } from "@/components/GameClient";
 import { DeckGame } from "@/components/DeckGame";
+import { SoloGame } from "@/components/solo/SoloGame";
 
 type PageProps = {
   params: Promise<{ category: string }>;
 };
 
-/** Statically generate one page per quiz AND per deck for SEO + fast loads. */
+/** Statically generate one page per quiz, deck, and solo game. */
 export function generateStaticParams() {
-  return [...getAllQuizIds(), ...getAllDeckIds()].map((category) => ({
-    category,
-  }));
+  return [
+    ...getAllQuizIds(),
+    ...getAllDeckIds(),
+    ...getAllSoloGameIds(),
+  ].map((category) => ({ category }));
 }
 
 // This page reads the auth session (for the answer-reveal gate + Pro gate),
@@ -56,6 +64,20 @@ export async function generateMetadata({
     };
   }
 
+  const solo = getSoloGameById(category);
+  if (solo) {
+    return {
+      title: solo.title,
+      description: `${solo.title} — ${solo.description} A free solo game on Qwardoo.`,
+      alternates: { canonical: `/play/${solo.id}` },
+      openGraph: {
+        title: `${solo.title} — Qwardoo`,
+        description: solo.description,
+        type: "website",
+      },
+    };
+  }
+
   return { title: "Game not found" };
 }
 
@@ -63,12 +85,15 @@ export default async function PlayPage({ params }: PageProps) {
   const { category } = await params;
   const quiz = getQuizById(category);
 
-  // Prompt-deck party games (Would You Rather, etc.) — free, pass-and-play,
-  // no auth or Pro gate. Handled before the quiz path.
+  // Prompt-deck party games + solo skill/brain games — free, no auth or Pro
+  // gate. Handled before the quiz path.
   if (!quiz) {
     const deck = getDeckById(category);
     if (deck) {
       return <DeckGame deck={deck} />;
+    }
+    if (isSoloGameId(category)) {
+      return <SoloGame id={category} />;
     }
     notFound();
   }

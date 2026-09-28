@@ -1,0 +1,33 @@
+{
+  "id": "logic-pattern-puzzle",
+  "title": "Logic & Pattern Puzzle",
+  "puzzles": [
+    { "prompt": "2, 4, 6, 8, ?", "options": ["9", "10", "12", "14"], "answer": "10" },
+    { "prompt": "1, 2, 4, 8, ?", "options": ["10", "12", "16", "14"], "answer": "16" },
+    { "prompt": "3, 6, 9, 12, ?", "options": ["13", "14", "15", "18"], "answer": "15" },
+    { "prompt": "1, 4, 9, 16, ?", "options": ["20", "24", "25", "36"], "answer": "25" },
+    { "prompt": "2, 3, 5, 7, 11, ?", "options": ["12", "13", "14", "15"], "answer": "13" },
+    { "prompt": "1, 1, 2, 3, 5, 8, ?", "options": ["11", "12", "13", "15"], "answer": "13" },
+    { "prompt": "5, 10, 20, 40, ?", "options": ["60", "70", "80", "100"], "answer": "80" },
+    { "prompt": "100, 90, 80, 70, ?", "options": ["50", "60", "65", "75"], "answer": "60" },
+    { "prompt": "A, C, E, G, ?", "options": ["H", "I", "J", "K"], "answer": "I" },
+    { "prompt": "Z, Y, X, W, ?", "options": ["U", "V", "T", "S"], "answer": "V" },
+    { "prompt": "2, 6, 12, 20, ?", "options": ["28", "30", "32", "36"], "answer": "30" },
+    { "prompt": "1, 3, 6, 10, ?", "options": ["13", "14", "15", "16"], "answer": "15" },
+    { "prompt": "81, 27, 9, 3, ?", "options": ["0", "1", "2", "3"], "answer": "1" },
+    { "prompt": "7, 14, 28, 56, ?", "options": ["84", "96", "112", "128"], "answer": "112" },
+    { "prompt": "If all Bloops are Razzies and all Razzies are Lazzies, then all Bloops are…", "options": ["Only Razzies", "Lazzies", "Not Lazzies", "Neither"], "answer": "Lazzies" },
+    { "prompt": "Which number is the odd one out: 2, 3, 5, 9, 11", "options": ["2", "3", "9", "11"], "answer": "9" },
+    { "prompt": "Monday, Wednesday, Friday, ?", "options": ["Saturday", "Sunday", "Tuesday", "Thursday"], "answer": "Sunday" },
+    { "prompt": "3, 5, 9, 17, ?", "options": ["25", "31", "33", "34"], "answer": "33" },
+    { "prompt": "AB, CD, EF, ?", "options": ["FG", "GH", "HI", "GI"], "answer": "GH" },
+    { "prompt": "12, 21, 23, 32, 34, ?", "options": ["41", "43", "45", "40"], "answer": "43" },
+    { "prompt": "2, 4, 8, 16, 32, ?", "options": ["48", "56", "64", "72"], "answer": "64" },
+    { "prompt": "Which shape completes the pattern: circle, square, circle, square, ?", "options": ["Triangle", "Circle", "Square", "Star"], "answer": "Circle" },
+    { "prompt": "10, 9, 7, 4, ?", "options": ["0", "1", "2", "3"], "answer": "0" },
+    { "prompt": "1, 8, 27, 64, ?", "options": ["100", "121", "125", "144"], "answer": "125" },
+    { "prompt": "J, F, M, A, M, ? (hint: months)", "options": ["J", "S", "O", "A"], "answer": "J" },
+    { "prompt": "6, 11, 21, 41, ?", "options": ["61", "71", "81", "82"], "answer": "81" },
+    { "prompt": "Odd one out: apple, banana, carrot, grape", "options": ["Apple", "Banana", "Carrot", "Grape"], "answer": "Carrot" }
+  ]
+}

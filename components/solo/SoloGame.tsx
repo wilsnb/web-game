@@ -1,0 +1,22 @@
+"use client";
+
+import { ReactionTime } from "./ReactionTime";
+import { SpeedMath } from "./SpeedMath";
+import { MemorySequence } from "./MemorySequence";
+import { LogicPuzzle } from "./LogicPuzzle";
+
+/** Maps a solo-game id to its component. */
+export function SoloGame({ id }: { id: string }) {
+  switch (id) {
+    case "reaction-time-test":
+      return <ReactionTime />;
+    case "speed-math-challenge":
+      return <SpeedMath />;
+    case "memory-sequence":
+      return <MemorySequence />;
+    case "logic-pattern-puzzle":
+      return <LogicPuzzle />;
+    default:
+      return null;
+  }
+}
