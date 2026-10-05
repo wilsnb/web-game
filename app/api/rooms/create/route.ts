@@ -5,6 +5,7 @@ import { getProfile } from "@/lib/profile";
 import {
   generateRoomCode,
   initialRoomState,
+  initialSoloRoomState,
   MP_MIN_ROUNDS,
   MP_MAX_ROUNDS,
   MP_MIN_GUESSES,
@@ -12,8 +13,10 @@ import {
   MP_MIN_TURN_SECONDS,
   MP_MAX_TURN_SECONDS,
   type RoomPlayer,
+  type RoomState,
 } from "@/lib/multiplayer/room";
 import { getQuizById } from "@/lib/quizzes";
+import { isSoloGameId } from "@/lib/soloGames";
 
 /**
  * POST /api/rooms/create { quizId } — host creates a room.
@@ -36,6 +39,7 @@ export async function POST(request: Request) {
 
   let body: {
     quizId?: string;
+    soloGameId?: string;
     rounds?: number;
     guessesPerRound?: number;
     turnSeconds?: number;
@@ -45,6 +49,30 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
+
+  const profileEarly = await getProfile();
+  const hostName =
+    profileEarly?.username ||
+    (user.user_metadata?.full_name as string) ||
+    user.email?.split("@")[0] ||
+    "Host";
+  const host: RoomPlayer = {
+    id: user.id,
+    name: hostName,
+    isHost: true,
+    isGuest: false,
+  };
+
+  // --- Solo-race branch: host a room for a solo skill/brain game ---
+  if (body.soloGameId) {
+    if (!isSoloGameId(body.soloGameId)) {
+      return NextResponse.json({ error: "Pick a valid game." }, { status: 400 });
+    }
+    const seed = Math.floor(Math.random() * 1e9);
+    const soloState = initialSoloRoomState(host, body.soloGameId, seed);
+    return insertRoom(user.id, body.soloGameId, soloState);
+  }
+
   const quizId = body.quizId;
   if (!quizId || !getQuizById(quizId)) {
     return NextResponse.json({ error: "Pick a valid quiz." }, { status: 400 });
@@ -67,37 +95,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid game settings." }, { status: 400 });
   }
 
-  const profile = await getProfile();
-  const hostName =
-    profile?.username ||
-    (user.user_metadata?.full_name as string) ||
-    user.email?.split("@")[0] ||
-    "Host";
+  const triviaState = initialRoomState(host, quizId, {
+    rounds,
+    guessesPerRound,
+    turnSeconds,
+  });
+  return insertRoom(user.id, quizId, triviaState);
+}
 
-  const host: RoomPlayer = {
-    id: user.id,
-    name: hostName,
-    isHost: true,
-    isGuest: false,
-  };
-
+/**
+ * Insert a room row with a unique code, retrying on code collision. `contentId`
+ * is stored in the quiz_id column (a quiz id for trivia, a solo game id for
+ * solo-race). Returns the JSON response for the caller.
+ */
+async function insertRoom(
+  hostId: string,
+  contentId: string,
+  state: RoomState
+) {
   const admin = createSupabaseAdminClient();
 
-  // Try a few codes in case of a rare collision.
   for (let attempt = 0; attempt < 6; attempt++) {
     const code = generateRoomCode();
     const { data, error } = await admin
       .from("rooms")
-      .insert({
-        code,
-        host_id: user.id,
-        quiz_id: quizId,
-        state: initialRoomState(host, quizId, {
-          rounds,
-          guessesPerRound,
-          turnSeconds,
-        }),
-      })
+      .insert({ code, host_id: hostId, quiz_id: contentId, state })
       .select("code")
       .single();
 

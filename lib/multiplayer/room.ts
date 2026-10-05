@@ -54,9 +54,23 @@ export interface RoomGame {
   turnEndsAt: number;
 }
 
+/** One player's result in a solo-race room (powers the live leaderboard). */
+export interface RoomSoloResult {
+  playerId: string;
+  name: string;
+  /** The player's final score; null until they finish their run. */
+  score: number | null;
+  status: "playing" | "finished";
+}
+
 /** Room shared state — the single source of truth streamed to all players. */
 export interface RoomState {
   phase: "lobby" | "playing" | "finished";
+  /**
+   * Room mode. Absent on legacy rooms, which are all trivia — treat a missing
+   * `mode` as "trivia" everywhere for backward compatibility.
+   */
+  mode?: "trivia" | "solo-race";
   players: RoomPlayer[];
   quizId: string;
   /** Settings the host chose (used when the game starts). */
@@ -65,6 +79,14 @@ export interface RoomState {
   counter: number;
   /** The live game; null while in the lobby. */
   game: RoomGame | null;
+
+  // --- Solo-race mode only ---
+  /** Which solo game is being raced. */
+  soloGameId?: string;
+  /** Shared seed so every player faces the identical challenge. */
+  seed?: number;
+  /** Per-player results for the live leaderboard. */
+  soloResults?: RoomSoloResult[];
 }
 
 export interface Room {
@@ -111,7 +133,7 @@ export const MP_MAX_GUESSES = 10;
 export const MP_MIN_TURN_SECONDS = 10;
 export const MP_MAX_TURN_SECONDS = 120;
 
-/** Initial shared state for a new room (lobby). */
+/** Initial shared state for a new trivia room (lobby). */
 export function initialRoomState(
   host: RoomPlayer,
   quizId: string,
@@ -119,11 +141,36 @@ export function initialRoomState(
 ): RoomState {
   return {
     phase: "lobby",
+    mode: "trivia",
     players: [host],
     quizId,
     settings,
     counter: 0,
     game: null,
+  };
+}
+
+/**
+ * Initial shared state for a new solo-race room (lobby). Everyone will play the
+ * same solo game with the shared `seed` so the challenge is identical.
+ */
+export function initialSoloRoomState(
+  host: RoomPlayer,
+  soloGameId: string,
+  seed: number
+): RoomState {
+  return {
+    phase: "lobby",
+    mode: "solo-race",
+    players: [host],
+    // Reuse quizId as the generic content id so existing columns/queries work.
+    quizId: soloGameId,
+    soloGameId,
+    seed,
+    settings: { rounds: 1, guessesPerRound: 1, turnSeconds: 0 },
+    counter: 0,
+    game: null,
+    soloResults: [],
   };
 }
 

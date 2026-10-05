@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SoloShell } from "./SoloShell";
+import type { SoloGameProps } from "./SoloGame";
 import { shuffle } from "@/lib/deckEngine";
 import data from "@/data/higherlower/social-media.json";
 
@@ -16,7 +17,7 @@ interface Item {
  * keeps the streak going and swaps in a new challenger; wrong ends the run.
  * Score = your streak. Real numbers are revealed after each guess.
  */
-export function HigherLower() {
+export function HigherLower({ seed, onFinish, overExtra, multiplayer }: SoloGameProps = {}) {
   return (
     <SoloShell
       gameId="higher-or-lower"
@@ -26,17 +27,26 @@ export function HigherLower() {
       startLabel="Start"
       higherIsBetter
       formatScore={(s) => `${s} streak`}
+      onFinish={onFinish}
+      overExtra={overExtra}
+      multiplayer={multiplayer}
     >
-      {({ finish }) => <HigherLowerRun finish={finish} />}
+      {({ finish }) => <HigherLowerRun finish={finish} seed={seed} />}
     </SoloShell>
   );
 }
 
-function HigherLowerRun({ finish }: { finish: (score: number) => void }) {
+function HigherLowerRun({
+  finish,
+  seed,
+}: {
+  finish: (score: number) => void;
+  seed?: number;
+}) {
   const items = useMemo(() => {
-    const seed = Math.floor(Math.random() * 1e9);
-    return shuffle(data.items as Item[], seed);
-  }, []);
+    const s = typeof seed === "number" ? seed : Math.floor(Math.random() * 1e9);
+    return shuffle(data.items as Item[], s);
+  }, [seed]);
 
   // Both items are shown by NAME only during the guess. After the pick, both
   // counts are revealed. left/right are just the two items being compared.

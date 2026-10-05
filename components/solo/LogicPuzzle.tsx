@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { SoloShell } from "./SoloShell";
+import type { SoloGameProps } from "./SoloGame";
 import { shuffle } from "@/lib/deckEngine";
 import puzzleData from "@/data/puzzles/logic-puzzles.json";
 
@@ -18,7 +19,7 @@ interface Puzzle {
  * puzzle bank. Pick the right option; score = number correct. Content-driven,
  * so the bank can grow without touching this component.
  */
-export function LogicPuzzle() {
+export function LogicPuzzle({ seed, onFinish, overExtra, multiplayer }: SoloGameProps = {}) {
   return (
     <SoloShell
       gameId="logic-pattern-puzzle"
@@ -28,18 +29,28 @@ export function LogicPuzzle() {
       startLabel="Start"
       higherIsBetter
       formatScore={(s) => `${s} / ${ROUNDS}`}
+      onFinish={onFinish}
+      overExtra={overExtra}
+      multiplayer={multiplayer}
     >
-      {({ finish }) => <LogicRun finish={finish} />}
+      {({ finish }) => <LogicRun finish={finish} seed={seed} />}
     </SoloShell>
   );
 }
 
-function LogicRun({ finish }: { finish: (score: number) => void }) {
+function LogicRun({
+  finish,
+  seed,
+}: {
+  finish: (score: number) => void;
+  seed?: number;
+}) {
   const puzzles = useMemo(() => {
     const all = puzzleData.puzzles as Puzzle[];
-    const seed = Math.floor(Math.random() * 1e9);
-    return shuffle(all, seed).slice(0, Math.min(ROUNDS, all.length));
-  }, []);
+    // Shared seed in solo-race (identical puzzles for all); random when solo.
+    const s = typeof seed === "number" ? seed : Math.floor(Math.random() * 1e9);
+    return shuffle(all, s).slice(0, Math.min(ROUNDS, all.length));
+  }, [seed]);
 
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);

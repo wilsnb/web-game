@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SoloShell } from "./SoloShell";
+import type { SoloGameProps } from "./SoloGame";
+import { randSource } from "@/lib/multiplayer/prng";
 
 const ROUNDS = 5;
 
@@ -11,8 +13,11 @@ type Stage = "waiting" | "ready" | "tooSoon" | "clicked";
  * Reaction Time: 5 rounds of "wait for green, then tap." Each round measures
  * the tap latency in ms; the final score is the average (lower is better).
  * Tapping before green = "too soon" and re-arms that round.
+ *
+ * In solo-race, the per-round green delays come from the shared seed so every
+ * player waits the identical amount each round — then reaction times compare.
  */
-export function ReactionTime() {
+export function ReactionTime({ seed, onFinish, overExtra, multiplayer }: SoloGameProps = {}) {
   return (
     <SoloShell
       gameId="reaction-time-test"
@@ -22,13 +27,22 @@ export function ReactionTime() {
       startLabel="Start"
       higherIsBetter={false}
       formatScore={(s) => `${Math.round(s)} ms`}
+      onFinish={onFinish}
+      overExtra={overExtra}
+      multiplayer={multiplayer}
     >
-      {({ finish }) => <ReactionRun finish={finish} />}
+      {({ finish }) => <ReactionRun finish={finish} seed={seed} />}
     </SoloShell>
   );
 }
 
-function ReactionRun({ finish }: { finish: (score: number) => void }) {
+function ReactionRun({
+  finish,
+  seed,
+}: {
+  finish: (score: number) => void;
+  seed?: number;
+}) {
   const [round, setRound] = useState(1);
   const [stage, setStage] = useState<Stage>("waiting");
   const [times, setTimes] = useState<number[]>([]);
@@ -36,16 +50,21 @@ function ReactionRun({ finish }: { finish: (score: number) => void }) {
   const goAtRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Fixed 1.5–4s delay per round. Seeded (identical for all players) in a race.
+  const delays = useMemo(() => {
+    const rand = randSource(seed);
+    return Array.from({ length: ROUNDS }, () => 1500 + rand() * 2500);
+  }, [seed]);
+
   const armRound = useCallback(() => {
     setStage("waiting");
     setLastMs(null);
-    // Random 1.5–4s delay before turning green.
-    const delay = 1500 + Math.random() * 2500;
+    const delay = delays[round - 1] ?? 1500 + Math.random() * 2500;
     timerRef.current = setTimeout(() => {
       goAtRef.current = performance.now();
       setStage("ready");
     }, delay);
-  }, []);
+  }, [delays, round]);
 
   useEffect(() => {
     armRound();

@@ -12,7 +12,7 @@ import { hasActiveSubscription } from "@/lib/subscription/subscription";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { GameClient } from "@/components/GameClient";
 import { DeckGame } from "@/components/DeckGame";
-import { SoloGame } from "@/components/solo/SoloGame";
+import { SoloEntry } from "@/components/solo/SoloEntry";
 
 type PageProps = {
   params: Promise<{ category: string }>;
@@ -85,15 +85,20 @@ export default async function PlayPage({ params }: PageProps) {
   const { category } = await params;
   const quiz = getQuizById(category);
 
-  // Prompt-deck party games + solo skill/brain games — free, no auth or Pro
-  // gate. Handled before the quiz path.
+  // Prompt-deck party games + solo skill/brain games — free, no Pro gate.
+  // Handled before the quiz path.
   if (!quiz) {
     const deck = getDeckById(category);
     if (deck) {
       return <DeckGame deck={deck} />;
     }
     if (isSoloGameId(category)) {
-      return <SoloGame id={category} />;
+      const meta = getSoloGameById(category)!;
+      const supabase = await createSupabaseServerClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      return <SoloEntry meta={meta} isSignedIn={Boolean(user)} />;
     }
     notFound();
   }

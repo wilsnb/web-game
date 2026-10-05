@@ -6,8 +6,10 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { RoomView } from "@/components/multiplayer/RoomView";
+import { SoloRoomView } from "@/components/multiplayer/SoloRoomView";
 import { normalizeCode } from "@/lib/multiplayer/room";
 import { getQuizById } from "@/lib/quizzes";
+import { isSoloGameId, getSoloGameById } from "@/lib/soloGames";
 
 export const metadata: Metadata = {
   title: "Multiplayer room",
@@ -24,7 +26,7 @@ export default async function RoomPage({
   const { code } = await params;
   const roomCode = normalizeCode(code);
 
-  // Look up the room's quiz so we can render the real game UI.
+  // Look up the room's content id (quiz_id holds a quiz id or a solo game id).
   const admin = createSupabaseAdminClient();
   const { data: room } = await admin
     .from("rooms")
@@ -34,8 +36,12 @@ export default async function RoomPage({
   if (!room) {
     notFound();
   }
-  const quiz = getQuizById(room.quiz_id);
-  if (!quiz) {
+
+  const soloGame = isSoloGameId(room.quiz_id)
+    ? getSoloGameById(room.quiz_id)
+    : undefined;
+  const quiz = soloGame ? undefined : getQuizById(room.quiz_id);
+  if (!soloGame && !quiz) {
     notFound();
   }
 
@@ -57,7 +63,15 @@ export default async function RoomPage({
           ← Leave room
         </Link>
         <div className="mt-md">
-          <RoomView code={roomCode} quiz={quiz} viewerId={user?.id ?? null} />
+          {soloGame ? (
+            <SoloRoomView
+              code={roomCode}
+              soloGameId={soloGame.id}
+              viewerId={user?.id ?? null}
+            />
+          ) : (
+            <RoomView code={roomCode} quiz={quiz!} viewerId={user?.id ?? null} />
+          )}
         </div>
       </section>
 

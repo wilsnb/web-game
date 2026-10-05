@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SoloShell } from "./SoloShell";
+import type { SoloGameProps } from "./SoloGame";
+import { randSource } from "@/lib/multiplayer/prng";
 
 const PADS = [
   { id: 0, base: "bg-at-coral/70", lit: "bg-at-coral" },
@@ -17,7 +19,7 @@ type Mode = "showing" | "input" | "over";
  * Each round adds one more step. One wrong tap ends the game. Score = the
  * highest level (sequence length) you completed.
  */
-export function MemorySequence() {
+export function MemorySequence({ seed, onFinish, overExtra, multiplayer }: SoloGameProps = {}) {
   return (
     <SoloShell
       gameId="memory-sequence"
@@ -27,19 +29,31 @@ export function MemorySequence() {
       startLabel="Start"
       higherIsBetter
       formatScore={(s) => `Level ${s}`}
+      onFinish={onFinish}
+      overExtra={overExtra}
+      multiplayer={multiplayer}
     >
-      {({ finish }) => <MemoryRun finish={finish} />}
+      {({ finish }) => <MemoryRun finish={finish} seed={seed} />}
     </SoloShell>
   );
 }
 
-function MemoryRun({ finish }: { finish: (score: number) => void }) {
+function MemoryRun({
+  finish,
+  seed,
+}: {
+  finish: (score: number) => void;
+  seed?: number;
+}) {
   const [sequence, setSequence] = useState<number[]>([]);
   const [mode, setMode] = useState<Mode>("showing");
   const [litPad, setLitPad] = useState<number | null>(null);
   const [inputPos, setInputPos] = useState(0);
   const inputPosRef = useRef(0);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  // Seeded (identical for all players in a race) or random pattern source.
+  const rand = useMemo(() => randSource(seed), [seed]);
+  const nextPad = useCallback(() => Math.floor(rand() * 4), [rand]);
 
   const clearTimers = () => {
     timers.current.forEach(clearTimeout);
@@ -67,7 +81,7 @@ function MemoryRun({ finish }: { finish: (score: number) => void }) {
 
   // Start: seed the first step.
   useEffect(() => {
-    const first = [Math.floor(Math.random() * 4)];
+    const first = [nextPad()];
     setSequence(first);
     playSequence(first);
     return clearTimers;
@@ -94,7 +108,7 @@ function MemoryRun({ finish }: { finish: (score: number) => void }) {
 
     if (nextPos >= sequence.length) {
       // Completed this level — add a step and replay.
-      const nextSeq = [...sequence, Math.floor(Math.random() * 4)];
+      const nextSeq = [...sequence, nextPad()];
       setTimeout(() => {
         setSequence(nextSeq);
         playSequence(nextSeq);

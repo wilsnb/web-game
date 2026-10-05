@@ -23,6 +23,9 @@ export function SoloShell({
   higherIsBetter,
   /** Formats a score for display (e.g. "312 ms", "17 correct", "Level 8"). */
   formatScore,
+  onFinish,
+  overExtra,
+  multiplayer,
   children,
 }: {
   gameId: string;
@@ -32,6 +35,16 @@ export function SoloShell({
   startLabel?: string;
   higherIsBetter: boolean;
   formatScore: (score: number) => string;
+  /**
+   * Solo-race only: fired with the final score when a run ends, so the caller
+   * can post it to the room. When set, the game-over screen shows the shared
+   * leaderboard area (via `overExtra`) instead of the local play-again card.
+   */
+  onFinish?: (score: number) => void;
+  /** Solo-race only: extra UI rendered on the game-over screen (leaderboard). */
+  overExtra?: React.ReactNode;
+  /** Hide the single-player "play again"/best UI (used in multiplayer). */
+  multiplayer?: boolean;
   children: (api: {
     finish: (score: number) => void;
   }) => React.ReactNode;
@@ -53,8 +66,9 @@ export function SoloShell({
       setBest(res.best);
       setIsNewBest(res.isNewBest);
       setPhase("over");
+      onFinish?.(score);
     },
-    [gameId, higherIsBetter]
+    [gameId, higherIsBetter, onFinish]
   );
 
   return (
@@ -105,26 +119,32 @@ export function SoloShell({
             <p className="mt-xxs text-display-lg font-semibold tabular-nums text-ink">
               {lastScore !== null ? formatScore(lastScore) : "—"}
             </p>
-            {best !== null && (
+            {!multiplayer && best !== null && (
               <p className="mt-sm text-body-apple text-ink-muted-80">
                 Best: {formatScore(best)}
               </p>
             )}
-            <div className="mt-lg flex flex-col items-center gap-sm sm:flex-row sm:justify-center">
-              <button
-                type="button"
-                onClick={start}
-                className="press-scale focus-ring inline-flex h-[44px] items-center justify-center rounded-pill bg-primary px-lg text-body-apple text-white transition-all duration-base ease-soft hover:-translate-y-[1px] hover:bg-primary-focus hover:shadow-at-card-hover active:translate-y-0"
-              >
-                Play again
-              </button>
-              <Link
-                href="/"
-                className="press-scale focus-ring inline-flex h-[44px] items-center justify-center rounded-pill border border-primary px-lg text-body-apple text-primary no-underline transition-all duration-base ease-soft hover:-translate-y-[1px] active:translate-y-0"
-              >
-                Back to games
-              </Link>
-            </div>
+
+            {/* Multiplayer: show the shared leaderboard; no local play-again. */}
+            {multiplayer ? (
+              <div className="mt-lg">{overExtra}</div>
+            ) : (
+              <div className="mt-lg flex flex-col items-center gap-sm sm:flex-row sm:justify-center">
+                <button
+                  type="button"
+                  onClick={start}
+                  className="press-scale focus-ring inline-flex h-[44px] items-center justify-center rounded-pill bg-primary px-lg text-body-apple text-white transition-all duration-base ease-soft hover:-translate-y-[1px] hover:bg-primary-focus hover:shadow-at-card-hover active:translate-y-0"
+                >
+                  Play again
+                </button>
+                <Link
+                  href="/"
+                  className="press-scale focus-ring inline-flex h-[44px] items-center justify-center rounded-pill border border-primary px-lg text-body-apple text-primary no-underline transition-all duration-base ease-soft hover:-translate-y-[1px] active:translate-y-0"
+                >
+                  Back to games
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>

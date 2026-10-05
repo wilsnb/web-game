@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { SoloShell } from "./SoloShell";
+import type { SoloGameProps } from "./SoloGame";
 import { shuffle } from "@/lib/deckEngine";
 import puzzleData from "@/data/puzzles/odd-one-out.json";
 
@@ -17,7 +18,7 @@ interface Puzzle {
  * Odd One Out: a run of {ROUNDS} puzzles — pick the item that doesn't belong.
  * A short reason is revealed after each pick. Score = number correct.
  */
-export function OddOneOut() {
+export function OddOneOut({ seed, onFinish, overExtra, multiplayer }: SoloGameProps = {}) {
   return (
     <SoloShell
       gameId="odd-one-out"
@@ -27,18 +28,27 @@ export function OddOneOut() {
       startLabel="Start"
       higherIsBetter
       formatScore={(s) => `${s} / ${ROUNDS}`}
+      onFinish={onFinish}
+      overExtra={overExtra}
+      multiplayer={multiplayer}
     >
-      {({ finish }) => <OddOneOutRun finish={finish} />}
+      {({ finish }) => <OddOneOutRun finish={finish} seed={seed} />}
     </SoloShell>
   );
 }
 
-function OddOneOutRun({ finish }: { finish: (score: number) => void }) {
+function OddOneOutRun({
+  finish,
+  seed,
+}: {
+  finish: (score: number) => void;
+  seed?: number;
+}) {
   const puzzles = useMemo(() => {
     const all = puzzleData.puzzles as Puzzle[];
-    const seed = Math.floor(Math.random() * 1e9);
-    return shuffle(all, seed).slice(0, Math.min(ROUNDS, all.length));
-  }, []);
+    const s = typeof seed === "number" ? seed : Math.floor(Math.random() * 1e9);
+    return shuffle(all, s).slice(0, Math.min(ROUNDS, all.length));
+  }, [seed]);
 
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);

@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SoloShell } from "./SoloShell";
+import type { SoloGameProps } from "./SoloGame";
+import { randSource } from "@/lib/multiplayer/prng";
 
 const DURATION = 60; // seconds
 
@@ -10,18 +12,18 @@ interface Problem {
   answer: number;
 }
 
-/** Generate a random arithmetic problem (+, −, ×) with tidy operands. */
-function makeProblem(): Problem {
-  const op = ["+", "-", "×"][Math.floor(Math.random() * 3)];
+/** Generate an arithmetic problem (+, −, ×) with tidy operands from `rand`. */
+function makeProblem(rand: () => number): Problem {
+  const op = ["+", "-", "×"][Math.floor(rand() * 3)];
   let a: number;
   let b: number;
   if (op === "×") {
-    a = 2 + Math.floor(Math.random() * 11); // 2–12
-    b = 2 + Math.floor(Math.random() * 11);
+    a = 2 + Math.floor(rand() * 11); // 2–12
+    b = 2 + Math.floor(rand() * 11);
     return { text: `${a} × ${b}`, answer: a * b };
   }
-  a = 2 + Math.floor(Math.random() * 48); // 2–49
-  b = 2 + Math.floor(Math.random() * 48);
+  a = 2 + Math.floor(rand() * 48); // 2–49
+  b = 2 + Math.floor(rand() * 48);
   if (op === "-") {
     // Keep it non-negative for a cleaner feel.
     if (b > a) [a, b] = [b, a];
@@ -33,8 +35,11 @@ function makeProblem(): Problem {
 /**
  * Speed Math: 60-second sprint. Solve as many auto-generated problems as you
  * can; a correct answer advances instantly. Score = number correct.
+ *
+ * In solo-race the problem sequence is seeded, so every player gets the exact
+ * same problems in the same order — a fair head-to-head.
  */
-export function SpeedMath() {
+export function SpeedMath({ seed, onFinish, overExtra, multiplayer }: SoloGameProps = {}) {
   return (
     <SoloShell
       gameId="speed-math-challenge"
@@ -44,14 +49,25 @@ export function SpeedMath() {
       startLabel="Start"
       higherIsBetter
       formatScore={(s) => `${s} correct`}
+      onFinish={onFinish}
+      overExtra={overExtra}
+      multiplayer={multiplayer}
     >
-      {({ finish }) => <SpeedMathRun finish={finish} />}
+      {({ finish }) => <SpeedMathRun finish={finish} seed={seed} />}
     </SoloShell>
   );
 }
 
-function SpeedMathRun({ finish }: { finish: (score: number) => void }) {
-  const [problem, setProblem] = useState<Problem>(() => makeProblem());
+function SpeedMathRun({
+  finish,
+  seed,
+}: {
+  finish: (score: number) => void;
+  seed?: number;
+}) {
+  // One seeded (or random) source powers the whole problem stream.
+  const rand = useMemo(() => randSource(seed), [seed]);
+  const [problem, setProblem] = useState<Problem>(() => makeProblem(rand));
   const [value, setValue] = useState("");
   const [correct, setCorrect] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(DURATION);
@@ -81,7 +97,7 @@ function SpeedMathRun({ finish }: { finish: (score: number) => void }) {
       const next = correct + 1;
       setCorrect(next);
       correctRef.current = next;
-      setProblem(makeProblem());
+      setProblem(makeProblem(rand));
       setValue("");
     } else {
       // Wrong — flash red, clear, let them retry the same problem.

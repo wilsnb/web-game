@@ -62,8 +62,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Need at least one player." }, { status: 400 });
   }
 
-  state.phase = "playing";
-  state.game = buildRoomGame(state.players, state.settings);
+  if (state.mode === "solo-race") {
+    // Solo-race: no turn engine. Seed every player into the leaderboard with a
+    // "playing" status; scores arrive via the submit-score route.
+    state.phase = "playing";
+    state.soloResults = state.players.map((p) => ({
+      playerId: p.id,
+      name: p.name,
+      score: null,
+      status: "playing" as const,
+    }));
+  } else {
+    state.phase = "playing";
+    state.game = buildRoomGame(state.players, state.settings);
+  }
 
   const { error: upErr } = await admin
     .from("rooms")
