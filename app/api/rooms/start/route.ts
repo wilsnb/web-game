@@ -63,14 +63,17 @@ export async function POST(request: Request) {
   }
 
   if (state.mode === "solo-race") {
-    // Solo-race: no turn engine. Seed every player into the leaderboard with a
-    // "playing" status; scores arrive via the submit-score route.
+    // Round-synchronized solo-race. Seed every player's standings; rounds
+    // advance via the submit-round route.
     state.phase = "playing";
+    state.currentRound = 0;
+    state.roundPhase = "playing";
     state.soloResults = state.players.map((p) => ({
       playerId: p.id,
       name: p.name,
-      score: null,
-      status: "playing" as const,
+      total: 0,
+      rounds: [],
+      answeredCurrent: false,
     }));
   } else {
     state.phase = "playing";

@@ -3,12 +3,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRoom } from "@/lib/multiplayer/useRoom";
 import { SoloGame } from "@/components/solo/SoloGame";
+import type { RoundSync } from "@/components/solo/RoundGame";
+import type { RoundResult } from "@/lib/solo/roundTypes";
+import { REVEAL_SECONDS } from "@/lib/solo/roundTypes";
 import type { RoomSoloResult } from "@/lib/multiplayer/room";
 
 /**
- * Solo-race room: everyone plays the SAME seeded solo game on their own device
- * at their own pace, and each player's score lands on a shared live
- * leaderboard. Lobby → play (seeded game + report score) → finished leaderboard.
+ * Round-synchronized solo-race room. Everyone plays the SAME seeded game, one
+ * round at a time: answer within the round, wait for the group, see who got it
+ * right on the reveal, then advance together. Live leaderboard throughout.
  */
 export function SoloRoomView({
   code,
@@ -23,7 +26,6 @@ export function SoloRoomView({
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
-  const submittedRef = useRef(false);
 
   const [myId, setMyId] = useState<string | null>(viewerId);
   useEffect(() => {
@@ -35,7 +37,7 @@ export function SoloRoomView({
   const isHost = Boolean(myId && host && host.id === myId);
   const inRoom = Boolean(myId && state?.players.some((p) => p.id === myId));
 
-  // --- Join (auto for signed-in link visitors, name prompt for guests) ---
+  // --- Join (auto for signed-in link visitors; name prompt for guests) ---
   const [joinName, setJoinName] = useState("");
   const [joining, setJoining] = useState(false);
   const [autoJoined, setAutoJoined] = useState(false);
@@ -102,23 +104,60 @@ export function SoloRoomView({
     }
   }
 
-  // Report this player's final score to the room (once).
-  const submitScore = useCallback(
-    async (score: number) => {
-      if (submittedRef.current) return;
-      submittedRef.current = true;
-      const guestId =
-        typeof window !== "undefined"
-          ? sessionStorage.getItem("qwardoo:guestId") ?? undefined
-          : undefined;
-      await fetch("/api/rooms/submit-score", {
+  const guestId = () =>
+    typeof window !== "undefined"
+      ? sessionStorage.getItem("qwardoo:guestId") ?? undefined
+      : undefined;
+
+  // Report a round result to the room.
+  const onRoundResult = useCallback(
+    (index: number, result: RoundResult) => {
+      fetch("/api/rooms/submit-round", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, score, guestId }),
+        body: JSON.stringify({
+          code,
+          action: "answer",
+          round: index,
+          correct: result.correct,
+          points: result.points,
+          guestId: guestId(),
+        }),
       }).catch(() => {});
     },
     [code]
   );
+
+  // Manually advance the room from reveal -> next round (server is idempotent).
+  const advance = useCallback(() => {
+    fetch("/api/rooms/submit-round", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, action: "advance", guestId: guestId() }),
+    }).catch(() => {});
+  }, [code]);
+
+  // During reveal: count down REVEAL_SECONDS and auto-advance at 0. Any client
+  // may trigger (server idempotent). Resets per round.
+  const [revealLeft, setRevealLeft] = useState(REVEAL_SECONDS);
+  const advancedForRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (!state || state.mode !== "solo-race") return;
+    if (state.phase !== "playing" || state.roundPhase !== "reveal") return;
+    const round = state.currentRound ?? 0;
+    setRevealLeft(REVEAL_SECONDS);
+    const started = Date.now();
+    const id = setInterval(() => {
+      const left = REVEAL_SECONDS - Math.floor((Date.now() - started) / 1000);
+      setRevealLeft(Math.max(0, left));
+      if (left <= 0 && advancedForRef.current !== round) {
+        advancedForRef.current = round;
+        clearInterval(id);
+        advance();
+      }
+    }, 250);
+    return () => clearInterval(id);
+  }, [state, advance]);
 
   if (!state) {
     return <p className="font-haas text-at-body-md text-at-muted">Loading room…</p>;
@@ -126,30 +165,34 @@ export function SoloRoomView({
 
   const results = state.soloResults ?? [];
 
-  // --- PLAYING: render the seeded game; leaderboard shows on game-over ---
-  if (state.phase === "playing" && inRoom) {
-    return (
-      <SoloGame
-        id={soloGameId}
-        seed={state.seed}
-        onFinish={submitScore}
-        multiplayer
-        overExtra={<Leaderboard results={results} myId={myId} live />}
-      />
-    );
+  // --- PLAYING / FINISHED: drive the RoundGame engine via sync ---
+  if ((state.phase === "playing" || state.phase === "finished") && inRoom) {
+    const sync: RoundSync = {
+      seed: state.seed ?? 1,
+      currentRound: state.currentRound ?? 0,
+      gatePhase:
+        state.phase === "finished"
+          ? "finished"
+          : state.roundPhase === "reveal"
+          ? "reveal"
+          : "playing",
+      onRoundResult,
+      onAdvance: advance,
+      revealLeft,
+      revealExtra: <Leaderboard results={results} myId={myId} live />,
+      overExtra: <Leaderboard results={results} myId={myId} live={false} />,
+    };
+    return <SoloGame id={soloGameId} sync={sync} />;
   }
 
-  // --- FINISHED (or playing but not a participant): show the leaderboard ---
-  if (state.phase === "finished" || (state.phase === "playing" && !inRoom)) {
+  // Non-participant watching a game in progress: just the leaderboard.
+  if (state.phase === "playing" || state.phase === "finished") {
     return (
       <div className="flex flex-col gap-lg">
         <div className="rounded-at-md border border-at-hairline bg-at-canvas p-lg text-center shadow-at-card">
           <p className="font-haas text-at-caption uppercase tracking-wide text-at-muted">
             {state.phase === "finished" ? "Final results" : "Live standings"}
           </p>
-          <h2 className="motion-pop mt-xs font-haas text-at-display-md font-normal text-at-ink">
-            {winnerLabel(results, state.phase === "finished")}
-          </h2>
         </div>
         <Leaderboard results={results} myId={myId} live={state.phase !== "finished"} />
       </div>
@@ -167,8 +210,8 @@ export function SoloRoomView({
           {code}
         </p>
         <p className="mt-xs font-haas text-at-caption text-at-muted">
-          {connected ? "🟢 Live" : "Connecting…"} · Everyone plays the same
-          challenge — compare scores at the end.
+          {connected ? "🟢 Live" : "Connecting…"} · 10 rounds · everyone gets the
+          same questions, fastest correct answers score more.
         </p>
         <button
           type="button"
@@ -251,7 +294,7 @@ export function SoloRoomView({
   );
 }
 
-/** Shared leaderboard, sorted by score (highest first), unfinished last. */
+/** Shared leaderboard, sorted by cumulative total (highest first). */
 function Leaderboard({
   results,
   myId,
@@ -261,46 +304,38 @@ function Leaderboard({
   myId: string | null;
   live: boolean;
 }) {
-  const sorted = [...results].sort((a, b) => {
-    if (a.status !== b.status) return a.status === "finished" ? -1 : 1;
-    return (b.score ?? -Infinity) - (a.score ?? -Infinity);
-  });
-
+  const sorted = [...results].sort((a, b) => b.total - a.total);
   return (
     <div className="rounded-at-md border border-at-hairline bg-at-canvas p-lg shadow-at-card">
       <h3 className="mb-sm font-haas text-at-caption font-medium uppercase tracking-wide text-at-muted">
-        {live ? "Live leaderboard" : "Leaderboard"}
+        {live ? "Live leaderboard" : "Final leaderboard"}
       </h3>
       <ol className="flex flex-col">
-        {sorted.map((r, i) => (
-          <li
-            key={r.playerId}
-            className="flex items-center justify-between border-b border-at-hairline py-sm font-haas text-at-body-md text-at-ink last:border-b-0"
-          >
-            <span>
-              {i + 1}. {r.name}
-              {r.playerId === myId ? " (you)" : ""}
-            </span>
-            <span className="font-medium">
-              {r.status === "finished" ? (
-                r.score
-              ) : (
-                <span className="text-at-caption text-at-muted">playing…</span>
-              )}
-            </span>
-          </li>
-        ))}
+        {sorted.map((r, i) => {
+          const last = r.rounds[r.rounds.length - 1];
+          return (
+            <li
+              key={r.playerId}
+              className="flex items-center justify-between border-b border-at-hairline py-sm font-haas text-at-body-md text-at-ink last:border-b-0"
+            >
+              <span>
+                {i + 1}. {r.name}
+                {r.playerId === myId ? " (you)" : ""}
+                {live && last && (
+                  <span
+                    className={`ml-xs text-at-caption ${
+                      last.correct ? "text-at-success" : "text-at-coral"
+                    }`}
+                  >
+                    {last.correct ? `+${last.points}` : "miss"}
+                  </span>
+                )}
+              </span>
+              <span className="font-medium tabular-nums">{r.total}</span>
+            </li>
+          );
+        })}
       </ol>
     </div>
   );
-}
-
-function winnerLabel(results: RoomSoloResult[], finished: boolean): string {
-  const done = results.filter((r) => r.status === "finished" && r.score !== null);
-  if (done.length === 0) return finished ? "No scores" : "In progress…";
-  const top = Math.max(...done.map((r) => r.score as number));
-  const winners = done.filter((r) => r.score === top);
-  if (!finished) return "In progress…";
-  if (winners.length > 1) return "It's a tie!";
-  return `${winners[0].name} wins`;
 }

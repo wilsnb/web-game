@@ -54,13 +54,18 @@ export interface RoomGame {
   turnEndsAt: number;
 }
 
-/** One player's result in a solo-race room (powers the live leaderboard). */
+/**
+ * One player's standing in a round-based solo-race. `total` is the cumulative
+ * score; `rounds[i]` holds their result for round i (absent until they answer).
+ */
 export interface RoomSoloResult {
   playerId: string;
   name: string;
-  /** The player's final score; null until they finish their run. */
-  score: number | null;
-  status: "playing" | "finished";
+  total: number;
+  /** Per-round outcomes, index = round number. */
+  rounds: { correct: boolean; points: number }[];
+  /** True once this player has submitted an answer for the current round. */
+  answeredCurrent: boolean;
 }
 
 /** Room shared state — the single source of truth streamed to all players. */
@@ -80,13 +85,17 @@ export interface RoomState {
   /** The live game; null while in the lobby. */
   game: RoomGame | null;
 
-  // --- Solo-race mode only ---
+  // --- Solo-race mode only (round-synchronized) ---
   /** Which solo game is being raced. */
   soloGameId?: string;
   /** Shared seed so every player faces the identical challenge. */
   seed?: number;
-  /** Per-player results for the live leaderboard. */
+  /** Per-player standings for the live leaderboard. */
   soloResults?: RoomSoloResult[];
+  /** 0-based index of the round everyone is currently on. */
+  currentRound?: number;
+  /** Round sub-phase: "playing" (answering) or "reveal" (showing results). */
+  roundPhase?: "playing" | "reveal";
 }
 
 export interface Room {
@@ -171,6 +180,8 @@ export function initialSoloRoomState(
     counter: 0,
     game: null,
     soloResults: [],
+    currentRound: 0,
+    roundPhase: "playing",
   };
 }
 
