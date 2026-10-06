@@ -6,6 +6,8 @@ import {
   generateRoomCode,
   initialRoomState,
   initialSoloRoomState,
+  initialImpostorRoomState,
+  IMPOSTOR_GAME_ID,
   MP_MIN_ROUNDS,
   MP_MAX_ROUNDS,
   MP_MIN_GUESSES,
@@ -40,6 +42,7 @@ export async function POST(request: Request) {
   let body: {
     quizId?: string;
     soloGameId?: string;
+    gameId?: string;
     rounds?: number;
     guessesPerRound?: number;
     turnSeconds?: number;
@@ -71,6 +74,12 @@ export async function POST(request: Request) {
     const seed = Math.floor(Math.random() * 1e9);
     const soloState = initialSoloRoomState(host, body.soloGameId, seed);
     return insertRoom(user.id, body.soloGameId, soloState);
+  }
+
+  // --- Impostor branch: host a "Who is the Impostor" room ---
+  if (body.gameId === IMPOSTOR_GAME_ID) {
+    const impostorState = initialImpostorRoomState(host);
+    return insertRoom(user.id, IMPOSTOR_GAME_ID, impostorState);
   }
 
   const quizId = body.quizId;

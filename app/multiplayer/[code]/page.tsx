@@ -7,7 +7,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { RoomView } from "@/components/multiplayer/RoomView";
 import { SoloRoomView } from "@/components/multiplayer/SoloRoomView";
-import { normalizeCode } from "@/lib/multiplayer/room";
+import { ImpostorRoomView } from "@/components/multiplayer/ImpostorRoomView";
+import { normalizeCode, IMPOSTOR_GAME_ID } from "@/lib/multiplayer/room";
 import { getQuizById } from "@/lib/quizzes";
 import { isSoloGameId, getSoloGameById } from "@/lib/soloGames";
 
@@ -37,11 +38,13 @@ export default async function RoomPage({
     notFound();
   }
 
-  const soloGame = isSoloGameId(room.quiz_id)
-    ? getSoloGameById(room.quiz_id)
-    : undefined;
-  const quiz = soloGame ? undefined : getQuizById(room.quiz_id);
-  if (!soloGame && !quiz) {
+  const isImpostor = room.quiz_id === IMPOSTOR_GAME_ID;
+  const soloGame =
+    !isImpostor && isSoloGameId(room.quiz_id)
+      ? getSoloGameById(room.quiz_id)
+      : undefined;
+  const quiz = isImpostor || soloGame ? undefined : getQuizById(room.quiz_id);
+  if (!isImpostor && !soloGame && !quiz) {
     notFound();
   }
 
@@ -63,7 +66,9 @@ export default async function RoomPage({
           ← Leave room
         </Link>
         <div className="mt-md">
-          {soloGame ? (
+          {isImpostor ? (
+            <ImpostorRoomView code={roomCode} viewerId={user?.id ?? null} />
+          ) : soloGame ? (
             <SoloRoomView
               code={roomCode}
               soloGameId={soloGame.id}

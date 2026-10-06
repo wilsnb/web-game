@@ -130,6 +130,7 @@ export const CATALOG: CatalogCategory[] = [
         title: "Who is the Impostor",
         description: "Find the player who doesn't know the secret word.",
         comingSoon: false,
+        href: "/play/who-is-the-impostor",
       },
       {
         id: "never-have-i-ever",

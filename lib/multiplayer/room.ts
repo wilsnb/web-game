@@ -68,6 +68,55 @@ export interface RoomSoloResult {
   answeredCurrent: boolean;
 }
 
+/**
+ * NON-SECRET impostor-game state (safe to stream to everyone). The secret
+ * role assignment (who is the impostor + the words) lives server-side in the
+ * `room_secrets` table and is NEVER placed here.
+ */
+export interface ImpostorState {
+  /** Sub-phase within the impostor game. */
+  phase:
+    | "reveal-role" // each player privately views their card, then readies up
+    | "clues" // players type one clue each, in turn order
+    | "voting" // everyone votes for a suspect
+    | "ejection" // show who was voted out + whether they were an impostor
+    | "impostor-guess" // an ejected impostor's one shot at the real word
+    | "results"; // final reveal + winner
+  /** Seating order = all player ids (join order); fixed for the whole game. */
+  order: string[];
+  /** Players still in the game (not yet ejected). Ejected players spectate. */
+  living: string[];
+  /** 1-based round number (increments each clue→vote→ejection cycle). */
+  round: number;
+  /** The category hint shown to everyone (not the word itself). */
+  category: string;
+  /** How many impostors are in this game (1, or 2 for 6+ players). */
+  impostorCount: number;
+  /** Players who've tapped "Ready" on the role-reveal screen. */
+  ready: string[];
+  /** This round's clue turn order (living players, in seating order). */
+  clueOrder: string[];
+  /** Whose turn it is to give a clue (index into clueOrder). */
+  clueIndex: number;
+  /** Clues submitted THIS round, in order given. */
+  clues: { playerId: string; name: string; text: string }[];
+  /** Votes this round: voterId -> suspectId. */
+  votes: Record<string, string>;
+  /** Who was ejected after voting (null = tie/no ejection). */
+  ejectedId: string | null;
+  /** Whether the ejected player was an impostor (revealed at ejection). */
+  ejectedWasImpostor: boolean;
+  /** The real group word, revealed only at results (or on impostor guess). */
+  revealWord: string | null;
+  /** Final outcome once decided. */
+  result: null | {
+    winner: "crew" | "impostors";
+    reason: string;
+    /** All roles, revealed at the end. */
+    roles: { playerId: string; name: string; wasImpostor: boolean }[];
+  };
+}
+
 /** Room shared state — the single source of truth streamed to all players. */
 export interface RoomState {
   phase: "lobby" | "playing" | "finished";
@@ -75,7 +124,7 @@ export interface RoomState {
    * Room mode. Absent on legacy rooms, which are all trivia — treat a missing
    * `mode` as "trivia" everywhere for backward compatibility.
    */
-  mode?: "trivia" | "solo-race";
+  mode?: "trivia" | "solo-race" | "impostor";
   players: RoomPlayer[];
   quizId: string;
   /** Settings the host chose (used when the game starts). */
@@ -96,6 +145,9 @@ export interface RoomState {
   currentRound?: number;
   /** Round sub-phase: "playing" (answering) or "reveal" (showing results). */
   roundPhase?: "playing" | "reveal";
+
+  // --- Impostor mode only (non-secret state; roles live in room_secrets) ---
+  impostor?: ImpostorState;
 }
 
 export interface Room {
@@ -182,6 +234,26 @@ export function initialSoloRoomState(
     soloResults: [],
     currentRound: 0,
     roundPhase: "playing",
+  };
+}
+
+/** Minimum players to start an impostor game, and when a 2nd impostor is added. */
+export const MP_IMPOSTOR_MIN_PLAYERS = 3;
+export const MP_IMPOSTOR_TWO_AT = 6;
+
+/** The content id used for impostor rooms (stored in quiz_id). */
+export const IMPOSTOR_GAME_ID = "who-is-the-impostor";
+
+/** Initial shared state for a new impostor room (lobby). */
+export function initialImpostorRoomState(host: RoomPlayer): RoomState {
+  return {
+    phase: "lobby",
+    mode: "impostor",
+    players: [host],
+    quizId: IMPOSTOR_GAME_ID,
+    settings: { rounds: 1, guessesPerRound: 1, turnSeconds: 0 },
+    counter: 0,
+    game: null,
   };
 }
 

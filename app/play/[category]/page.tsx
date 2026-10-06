@@ -10,9 +10,11 @@ import {
 import { isProGameId } from "@/data/catalog";
 import { hasActiveSubscription } from "@/lib/subscription/subscription";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { IMPOSTOR_GAME_ID } from "@/lib/multiplayer/room";
 import { GameClient } from "@/components/GameClient";
 import { DeckGame } from "@/components/DeckGame";
 import { SoloEntry } from "@/components/solo/SoloEntry";
+import { ImpostorEntry } from "@/components/multiplayer/ImpostorEntry";
 
 type PageProps = {
   params: Promise<{ category: string }>;
@@ -24,6 +26,7 @@ export function generateStaticParams() {
     ...getAllQuizIds(),
     ...getAllDeckIds(),
     ...getAllSoloGameIds(),
+    IMPOSTOR_GAME_ID,
   ].map((category) => ({ category }));
 }
 
@@ -99,6 +102,13 @@ export default async function PlayPage({ params }: PageProps) {
         data: { user },
       } = await supabase.auth.getUser();
       return <SoloEntry meta={meta} isSignedIn={Boolean(user)} />;
+    }
+    if (category === IMPOSTOR_GAME_ID) {
+      const supabase = await createSupabaseServerClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      return <ImpostorEntry isSignedIn={Boolean(user)} />;
     }
     notFound();
   }
